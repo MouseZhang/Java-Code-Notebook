@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="ExternalProjectImportWizard">
+		<item value="false" key="WizardProjectsImportPage.STORE_NESTED_PROJECTS"/>
+		<item value="false" key="WizardProjectsImportPage.STORE_COPY_PROJECT_ID"/>
+		<item value="false" key="WizardProjectsImportPage.STORE_ARCHIVE_SELECTED"/>
+		<list key="WizardProjectsImportPage.STORE_DIRECTORIES">
+			<item value="/Users/MouseZhang/Documents/JAVA/JavaDevelopmentInPractice/07_fangsoft_testcenter_net_server"/>
+			<item value="/Users/MouseZhang/Documents/JAVA/JavaDevelopmentInPractice/07_fangsoft_testcenter_net_client"/>
+			<item value="/Users/MouseZhang/Documents/JAVA/JavaDevelopmentInPractice/07_fangsoft_testcenter_net_common"/>
+			<item value="/Users/MouseZhang/Documents/JAVA/JavaDevelopmentInPractice/09_fangsoft_loc"/>
+			<item value="/Users/MouseZhang/Documents/JAVA/JavaDevelopmentInPractice/06_fangsoft_testcenter_thread"/>
+			<item value="/Users/MouseZhang/Documents/workspace/05_fangsoft_testcenter_mvc1"/>
+			<item value="/Users/MouseZhang/Documents/JAVA/JavaDevelopmentInPractice/04_fangsoft_testcenter_db"/>
+			<item value="/Users/MouseZhang/Documents/JAVA/JavaDevelopmentInPractice/03_fangsoft_testcenter_io"/>
+			<item value="/Users/MouseZhang/Documents/JAVA/JavaDevelopmentInPractice/02_fangsoft_testcenter_collection_interface"/>
+			<item value="/Users/MouseZhang/Documents/JAVA/JavaDevelopmentInPractice/01_fangsoft_testcenter_prototype"/>
+		</list>
+		<list key="WizardProjectsImportPage.STORE_ARCHIVES">
+			<item value=""/>
+		</list>
+	</section>
+</section>

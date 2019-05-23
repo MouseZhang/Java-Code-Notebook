@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Change method &apos;public int org.fangsoft.testcenter.model.QuestionResult.computerAnswer()&apos; to &apos;public int computeAnswer()&apos;&#x0A;- Original project: &apos;03_fangsoft_testcenter_io&apos;&#x0A;- Original element: &apos;org.fangsoft.testcenter.model.QuestionResult.computerAnswer()&apos;&#x0A;- New name: &apos;computeAnswer&apos;" delegate="false" deprecate="true" description="Change method &apos;computerAnswer&apos;" flags="589830" id="org.eclipse.jdt.ui.change.method.signature" input="/src&lt;org.fangsoft.testcenter.model{QuestionResult.java[QuestionResult~computerAnswer" name="computeAnswer" stamp="1532946934641" version="1.0"/>
+</session>
