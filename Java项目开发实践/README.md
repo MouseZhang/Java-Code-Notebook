@@ -1,4 +1,4 @@
-# Java Development In Practice
+# Java Development in Practice
 
 ## Requirements
 
