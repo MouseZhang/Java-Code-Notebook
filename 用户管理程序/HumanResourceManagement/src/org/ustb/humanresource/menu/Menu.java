@@ -1,0 +1,55 @@
+package org.ustb.humanresource.menu;
+
+import org.ustb.humanresource.operate.UserOperate;
+import org.ustb.humanresource.util.InputData;
+
+public class Menu {
+	public Menu() {
+		while (true) {
+			this.show();
+		}
+	}
+	
+	public void show() {
+		System.out.println("======== USTB人员管理系统 ========");
+		System.out.println("	1、增加用户");
+		System.out.println("	2、修改用户");
+		System.out.println("	3、删除用户");
+		System.out.println("	4、查询单个用户");
+		System.out.println("	5、查询全部用户");
+		System.out.println("	6、退出系统");
+		InputData input = new InputData();
+		int ch = input.getInt("\n请选择：", "请输入正确的选项！");
+		switch (ch) {
+			case 1: {
+				UserOperate.insert();
+				break;
+			}
+			case 2: {
+				UserOperate.update();
+				break;
+			}
+			case 3: {
+				UserOperate.delete();
+				break;
+			}
+			case 4: {
+				UserOperate.findId();
+				break;
+			}
+			case 5: {
+				UserOperate.findAll();
+				break;
+			}
+			case 6: {
+				System.out.println("Bye");
+				System.exit(1);
+				break;
+			}
+			default: {
+				System.out.println("请选择正确的选项！");
+				break;
+			}
+		}
+	}
+}
