@@ -377,7 +377,7 @@ public class TestDemo {
 
 > 设计4个线程对象，两个线程执行减法操作，两个线程执行加法操作。
 
-### 2.2 案例分析
+### 2.2 案例分析与实现
 
 > 对于本程序来讲最终的目的还是多个线程访问同一资源，但是区别在于，操作者变为多份，应该使用生产者与消费者模型。
 
@@ -476,4 +476,197 @@ public class TestDemo {
  [减法线程 - 2] 执行减法操作，操作结果为：-1
  ... ...
 ```
+
+此时的程序针对于某一个操作会有多个并行的线程出现，所以还需要考虑这多个线程的同步处理操作。
+
+---
+
+## 3 电脑生产案例分析
+
+### 3.1 案例要求
+
+> 设计一个生产电脑和搬运电脑的类，要求生产出一台电脑就搬走一台电脑，如果没有新的电脑生产出来，则搬运工要等待新电脑产出；如果生产的电脑没有被搬走，则要等待电脑搬走之后再生产，并统计出生产的电脑数量。
+
+### 3.2 案例分析与实现
+
+> 本程序是一个典型的生产者与消费者的程序，但是所生产和消费的是一个完整电脑信息。
+
+**范例：** 生产者与消费者模型
+
+```java
+package cn.ustb.demo;
+
+/**
+ * Created by MouseZhang on 2019/5/24.
+ */
+
+class Resource {
+    private int number; // 表示要共享操作的数值
+    private Computer computer; // 保存电脑类
+
+    public synchronized void create(String brand, double price) {
+        if (this.computer != null) { // 生产过了
+            try {
+                super.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        this.computer = new Computer(brand, price);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(" [" + Thread.currentThread().getName() + "] 电脑生产完成：" + this.computer);
+        super.notify();
+    }
+
+    public synchronized void get() {
+        if (this.computer == null) {
+            try {
+                super.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(" [" + Thread.currentThread().getName() + "] 取走电脑：" + this.computer);
+        this.computer = null; // 清空内容
+        super.notify();
+    }
+}
+
+class Computer { // 定义电脑实体类
+    private String brand;
+    private double price;
+    private static int count;
+
+    public Computer(String brand, double price) {
+        this.brand = brand;
+        this.price = price;
+        System.out.println("电脑生产的个数：" + Computer.count++);
+    }
+
+    @Override
+    public String toString() {
+        return "电脑的品牌：" + this.brand + "，价格：" + this.price;
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        Resource resource = new Resource();
+        new Thread(() -> {
+            for (int i = 0; i < 50; i++) {
+                if (i % 2 == 0) {
+                    resource.create("HP电脑", 4999);
+                } else {
+                    resource.create("MacBook", 18999);
+                }
+            }
+        }, "电脑生产者").start();
+        new Thread(() -> {
+            for (int i = 0; i < 50; i++) {
+                resource.get();
+            }
+        }, "电脑消费者").start();
+    }
+}
+```
+
+**程序执行结果：**
+
+```
+电脑生产的个数：0
+ [电脑生产者] 电脑生产完成：电脑的品牌：HP电脑，价格：4999.0
+ [电脑消费者] 取走电脑：电脑的品牌：HP电脑，价格：4999.0
+电脑生产的个数：1
+ [电脑生产者] 电脑生产完成：电脑的品牌：MacBook，价格：18999.0
+ [电脑消费者] 取走电脑：电脑的品牌：MacBook，价格：18999.0
+电脑生产的个数：2
+ [电脑生产者] 电脑生产完成：电脑的品牌：HP电脑，价格：4999.0
+ [电脑消费者] 取走电脑：电脑的品牌：HP电脑，价格：4999.0
+电脑生产的个数：3
+ [电脑生产者] 电脑生产完成：电脑的品牌：MacBook，价格：18999.0
+ [电脑消费者] 取走电脑：电脑的品牌：MacBook，价格：18999.0
+ ... ...
+```
+
+此时Computer只是作为一个数据的载体存在，而所有的同步处理操作全部由Resource负责。
+
+---
+
+## 4 问题抢答案例分析
+
+### 4.1 案例要求
+
+> 实现一个竞拍抢答程序：要求设置3个抢答者（3个线程），然后同时发出抢答指令，抢答成功者给出抢答成功提示，未抢答者给出失败提示。
+
+### 4.2 案例分析与实现
+
+> 本程序需要设置有一个操作结果的返回值，所以既然需要线程获取结果，最好使用Callable接口来实现抢答过程。
+
+**范例：** 问题抢答程序设计
+
+```java
+package cn.ustb.demo;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
+
+/**
+ * Created by MouseZhang on 2019/5/24.
+ */
+
+class AnswerThread implements Callable<String> {
+    private boolean flag; // 描述抢答结果
+
+    @Override
+    public String call() throws Exception {
+        Thread.sleep(1000);
+        synchronized (this) {
+            String result = null;
+            if (this.flag == false) { // 表示可以抢答
+                this.flag = true;
+                result = " [" + Thread.currentThread().getName() + "] 抢答成功！";
+            } else {
+                result = " [" + Thread.currentThread().getName() + "] 抢答失败！";
+            }
+            return result;
+        }
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) throws Exception{
+        AnswerThread thread = new AnswerThread();
+        FutureTask<String> taskA = new FutureTask<String>(thread);
+        FutureTask<String> taskB = new FutureTask<String>(thread);
+        FutureTask<String> taskC = new FutureTask<String>(thread);
+        new Thread(taskA, "抢答者-A").start();
+        new Thread(taskB, "抢答者-B").start();
+        new Thread(taskC, "抢答者-C").start();
+        System.out.println(taskA.get());
+        System.out.println(taskB.get());
+        System.out.println(taskC.get());
+    }
+}
+```
+
+**程序执行结果：**
+
+```
+ [抢答者-A] 抢答失败！
+ [抢答者-B] 抢答成功！
+ [抢答者-C] 抢答失败！
+```
+
+本程序依然属于同一资源的数据共享操作。
+
+---
 
