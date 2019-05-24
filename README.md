@@ -39,7 +39,7 @@
 
 **范例：**基本模型
 
-```java
+```Java
 package cn.ustb.demo;
 
 /**
