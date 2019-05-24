@@ -37,9 +37,7 @@
 > - title = 皇马C罗，content = 欧冠之王，最佳射手~
 > - title = 巴萨梅西，content = 西甲冠军，梅球王~
 
-**范例：**
-
-**基本模型**111sdf
+**范例：**基本模型
 
 ```java
 package cn.ustb.demo;
