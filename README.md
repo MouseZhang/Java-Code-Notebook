@@ -32,6 +32,8 @@
 
 待放入类图。。。。
 
+![enter description here][1]
+
 > 此时的生产者希望可以生产出两类数据：
 >
 > - title = 皇马C罗，content = 欧冠之王，最佳射手~
