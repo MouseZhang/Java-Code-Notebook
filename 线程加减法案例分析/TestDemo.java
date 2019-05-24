@@ -24,7 +24,7 @@ class Resource {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("[" + Thread.currentThread().getName() + "] 执行加法操作，操作结果为：" + this.number);
+        System.out.println("【" + Thread.currentThread().getName() + "】执行加法操作，操作结果为：" + this.number);
         this.flag = false;
         super.notify();
     }
@@ -43,7 +43,7 @@ class Resource {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println(" [" + Thread.currentThread().getName() + "] 执行减法操作，操作结果为：" + this.number);
+        System.out.println("【" + Thread.currentThread().getName() + "】执行减法操作，操作结果为：" + this.number);
         this.flag = true;
         super.notify();
     }

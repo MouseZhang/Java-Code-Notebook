@@ -416,7 +416,7 @@ class Resource {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("[" + Thread.currentThread().getName() + "] 执行加法操作，操作结果为：" + this.number);
+        System.out.println("【" + Thread.currentThread().getName() + "】执行加法操作，操作结果为：" + this.number);
         this.flag = false;
         super.notify();
     }
@@ -435,7 +435,7 @@ class Resource {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println(" [" + Thread.currentThread().getName() + "] 执行减法操作，操作结果为：" + this.number);
+        System.out.println("【" + Thread.currentThread().getName() + "】执行减法操作，操作结果为：" + this.number);
         this.flag = true;
         super.notify();
     }
@@ -471,15 +471,15 @@ public class TestDemo {
 **程序执行结果：**
 
 ```
- [减法线程 - 0] 执行减法操作，操作结果为：-1
-[加法线程 - 5] 执行加法操作，操作结果为：0
- [减法线程 - 4] 执行减法操作，操作结果为：-1
-[加法线程 - 3] 执行加法操作，操作结果为：0
- [减法线程 - 2] 执行减法操作，操作结果为：-1
-[加法线程 - 1] 执行加法操作，操作结果为：0
- [减法线程 - 2] 执行减法操作，操作结果为：-1
-[加法线程 - 1] 执行加法操作，操作结果为：0
- [减法线程 - 2] 执行减法操作，操作结果为：-1
+【减法线程 - 0】执行减法操作，操作结果为：-1
+【加法线程 - 5】执行加法操作，操作结果为：0
+【减法线程 - 4】执行减法操作，操作结果为：-1
+【加法线程 - 3】执行加法操作，操作结果为：0
+【减法线程 - 2】执行减法操作，操作结果为：-1
+【加法线程 - 1】执行加法操作，操作结果为：0
+【减法线程 - 2】执行减法操作，操作结果为：-1
+【加法线程 - 1】执行加法操作，操作结果为：0
+【减法线程 - 2】执行减法操作，操作结果为：-1
  ... ...
 ```
 
@@ -526,7 +526,7 @@ class Resource {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println(" [" + Thread.currentThread().getName() + "] 电脑生产完成：" + this.computer);
+        System.out.println("【" + Thread.currentThread().getName() + "】电脑生产完成：" + this.computer);
         super.notify();
     }
 
@@ -543,7 +543,7 @@ class Resource {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println(" [" + Thread.currentThread().getName() + "] 取走电脑：" + this.computer);
+        System.out.println("【" + Thread.currentThread().getName() + "】取走电脑：" + this.computer);
         this.computer = null; // 清空内容
         super.notify();
     }
@@ -591,17 +591,17 @@ public class TestDemo {
 
 ```
 电脑生产的个数：0
- [电脑生产者] 电脑生产完成：电脑的品牌：HP电脑，价格：4999.0
- [电脑消费者] 取走电脑：电脑的品牌：HP电脑，价格：4999.0
+【电脑生产者】电脑生产完成：电脑的品牌：HP电脑，价格：4999.0
+【电脑消费者】取走电脑：电脑的品牌：HP电脑，价格：4999.0
 电脑生产的个数：1
- [电脑生产者] 电脑生产完成：电脑的品牌：MacBook，价格：18999.0
- [电脑消费者] 取走电脑：电脑的品牌：MacBook，价格：18999.0
+【电脑生产者】电脑生产完成：电脑的品牌：MacBook，价格：18999.0
+【电脑消费者】取走电脑：电脑的品牌：MacBook，价格：18999.0
 电脑生产的个数：2
- [电脑生产者] 电脑生产完成：电脑的品牌：HP电脑，价格：4999.0
- [电脑消费者] 取走电脑：电脑的品牌：HP电脑，价格：4999.0
+【电脑生产者】电脑生产完成：电脑的品牌：HP电脑，价格：4999.0
+【电脑消费者】取走电脑：电脑的品牌：HP电脑，价格：4999.0
 电脑生产的个数：3
- [电脑生产者] 电脑生产完成：电脑的品牌：MacBook，价格：18999.0
- [电脑消费者] 取走电脑：电脑的品牌：MacBook，价格：18999.0
+【电脑生产者】电脑生产完成：电脑的品牌：MacBook，价格：18999.0
+【电脑消费者】取走电脑：电脑的品牌：MacBook，价格：18999.0
  ... ...
 ```
 
@@ -643,9 +643,9 @@ class AnswerThread implements Callable<String> {
             String result = null;
             if (this.flag == false) { // 表示可以抢答
                 this.flag = true;
-                result = " [" + Thread.currentThread().getName() + "] 抢答成功！";
+                result = "【" + Thread.currentThread().getName() + "】抢答成功！";
             } else {
-                result = " [" + Thread.currentThread().getName() + "] 抢答失败！";
+                result = "【" + Thread.currentThread().getName() + "】抢答失败！";
             }
             return result;
         }
@@ -671,9 +671,9 @@ public class TestDemo {
 **程序执行结果：**
 
 ```
- [抢答者-A] 抢答失败！
- [抢答者-B] 抢答成功！
- [抢答者-C] 抢答失败！
+【抢答者-A】抢答失败！
+【抢答者-B】抢答成功！
+【抢答者-C】抢答失败！
 ```
 
 本程序依然属于同一资源的数据共享操作。
@@ -743,4 +743,19 @@ Hello World
 
 以后只要发现有参数上使用了CharSequence最简单的做法就是传递一个字符串。
 
-- 全部代码
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/CharSequence接口/TestDemo.java)
+
+---
+
+## 6 AutoCloseable接口
+
+### 6.1 问题来源
+
+> 在程序里面有可能会进行一些外部资源的操作，而所有外部资源操作完毕之后往往都需要进行手工的关闭处理，现在以消息的发送处理为例。
+
+**范例：** 观察传统代码的问题
+
+```
+
+```
+
