@@ -371,7 +371,7 @@ public class TestDemo {
 ... ...
 ```
 
-此时的数据没有任何错误，也是按照预计的要求来实现的。
+> 此时的数据没有任何错误，也是按照预计的要求来实现的。
 
 - [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/生产者与消费者模型/解决数据重复问题/TestDemo.java)
 
@@ -483,7 +483,7 @@ public class TestDemo {
  ... ...
 ```
 
-此时的程序针对于某一个操作会有多个并行的线程出现，所以还需要考虑这多个线程的同步处理操作。
+> 此时的程序针对于某一个操作会有多个并行的线程出现，所以还需要考虑这多个线程的同步处理操作。
 
 - [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/线程加减法案例分析/TestDemo.java)
 
@@ -605,7 +605,7 @@ public class TestDemo {
  ... ...
 ```
 
-此时Computer只是作为一个数据的载体存在，而所有的同步处理操作全部由Resource负责。
+> 此时Computer只是作为一个数据的载体存在，而所有的同步处理操作全部由Resource负责。
 
 - [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/电脑生产案例分析/TestDemo.java)
 
@@ -676,7 +676,7 @@ public class TestDemo {
 【抢答者-C】抢答失败！
 ```
 
-本程序依然属于同一资源的数据共享操作。
+> 本程序依然属于同一资源的数据共享操作。
 
 - [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/问题抢答案例分析/TestDemo.java)
 
@@ -684,7 +684,7 @@ public class TestDemo {
 
 ## 5 CharSequence接口
 
-### 5.1 接口定义
+### 5.1 CharSequence接口定义
 
 > **CharSequence**是在JDK1.4时定义的接口，其描述的是一个字符序列标准操作接口。实际上，字符序列里面包含：String、StringBuffer、StringBuilder，下面来观察一下这三个类的定义形式：
 
@@ -741,7 +741,7 @@ Hello Kugou
 Hello World
 ```
 
-以后只要发现有参数上使用了CharSequence最简单的做法就是传递一个字符串。
+> 以后只要发现有参数上使用了CharSequence最简单的做法就是传递一个字符串。
 
 - [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/CharSequence接口/TestDemo.java)
 
@@ -808,7 +808,9 @@ java.lang.RuntimeException: 抛出一个异常
 	at cn.ustb.demo.TestDemo.main(TestDemo.java:37)
 ```
 
-### 6.2 接口定义
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/AutoCloseable接口/问题来源/TestDemo.java)
+
+### 6.2 AutoCloseable接口定义
 
 > 此时的代码每一次释放资源的同时都必须明确地调用close()方法，这样的处理逻辑过于繁琐。为了简化操作，在这个基础上，从JDK1.7开始追加了一个新的**AutoCloseable**接口，用于自动关闭：
 
@@ -877,4 +879,57 @@ public class TestDemo {
 产生异常，进行异常处理！
 ```
 
-使用AutoCloseable可以实现自动地资源释放处理操作，在以后的Java IO、数据库编程和网络编程也会经常使用此接口。
+> 使用AutoCloseable可以实现自动地资源释放处理操作，在以后的Java IO、数据库编程和网络编程也会经常使用此接口。
+
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/AutoCloseable接口/接口定义/TestDemo.java)
+
+---
+
+## 7 Cleaner类
+
+### 7.1 问题来源
+
+在任意一个类进行对象创建的时候一定会调用构造方法，利用构造方法进行对象属性的初始化操作，但是所有类对象在不使用的时候也需要进行一个处理，那么早期的处理使用的都是Object中的finalize()方法。
+
+**范例：** 传统对象回收处理
+
+```java
+package cn.ustb.demo;
+
+/**
+ * Created by MouseZhang on 2019/5/24.
+ */
+
+class Message {
+    public Message() {
+        System.out.println("【对象实例化时调用】电闪雷鸣，一代妖孽诞生！");
+    }
+
+    @Override
+    public void finalize() throws Throwable {
+        System.out.println("【Member被回收】老天爷，要把妖孽收走了！");
+        Thread.sleep(Long.MAX_VALUE);
+        throw new Exception("老子还想再活500年..."); // 是否抛出异常不影响程序的执行
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        Message message = new Message();
+        message = null; // 当前的对象已经不再拥有指向
+        System.gc(); // 强制性进行回收
+    }
+}
+```
+
+**程序执行结果：**
+
+```
+【对象实例化时调用】电闪雷鸣，一代妖孽诞生！
+【Member被回收】老天爷，要把妖孽收走了！
+```
+
+- 全部代码
+
+### 7.2 Cleaner类定义
+
