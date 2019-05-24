@@ -30,13 +30,7 @@
 
 > 生产者和消费者模型程序中最大的特点在于，生产者是一个线程，消费者也是一个线程，并且两个线程之间没有任何的直接联系，生产者负责数据的生产，而消费者负责数据的获取，每当生产者生产完成一个数据以后，消费者就要立即取走数据。
 
-待放入类图。。。。
-
-![enter description here][1]
-
 [1]:https://github.com/MouseZhang/Java-Code-Notebook/blob/master/生产者与消费者模型/模型基本结构/ProducerAndConsumer.png
-
-
 
 > 此时的生产者希望可以生产出两类数据：
 >
