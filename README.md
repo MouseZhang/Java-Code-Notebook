@@ -147,6 +147,8 @@ public class TestDemo {
 > - 问题一：数据发生了错位；
 > - 问题二：数据并没有按照要求，生产一个取走一个。
 
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/生产者与消费者模型/模型基本结构/TestDemo.java)
+
 ### 1.2 解决数据同步问题
 
 > 在多线程进行资源访问的时候一定需要进行同步处理，此时的问题需要通过同步的形式来进行访问。实际上当前最大的问题在于：当数据生产到一半的时候就有可能被消费者把数据取走。
@@ -242,6 +244,8 @@ public class TestDemo {
 ```
 
 > 通过修改后代码的执行效果可以发现，的确解决了当前数据不同步的问题，但是发现重复取出的问题更严重了。
+
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/生产者与消费者模型/解决数据同步问题/TestDemo.java)
 
 ### 1.3 解决数据重复问题
 
@@ -369,6 +373,8 @@ public class TestDemo {
 
 此时的数据没有任何错误，也是按照预计的要求来实现的。
 
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/生产者与消费者模型/解决数据重复问题/TestDemo.java)
+
 ---
 
 ## 2 线程加减法案例分析
@@ -478,6 +484,8 @@ public class TestDemo {
 ```
 
 此时的程序针对于某一个操作会有多个并行的线程出现，所以还需要考虑这多个线程的同步处理操作。
+
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/线程加减法案例分析/TestDemo.java)
 
 ---
 
@@ -599,6 +607,8 @@ public class TestDemo {
 
 此时Computer只是作为一个数据的载体存在，而所有的同步处理操作全部由Resource负责。
 
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/电脑生产案例分析/TestDemo.java)
+
 ---
 
 ## 4 问题抢答案例分析
@@ -668,6 +678,8 @@ public class TestDemo {
 
 本程序依然属于同一资源的数据共享操作。
 
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/问题抢答案例分析/TestDemo.java)
+
 ---
 
 ## 5 CharSequence接口
@@ -694,5 +706,41 @@ public class TestDemo {
 > - StringBuffer类中的方法全部使用了同步处理，而StringBuilder类使用了异步处理；
 > - StringBuffer性能较低，但是属于线程安全的操作，而StringBuilder性能较高，属于非线程安全操作。
 
-—此处插入类图--
+![CharSequence](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/CharSequence接口/CharSequence.png)
 
+> 在以后开发中如果见到了CharSequence就需要向里面传递任意的一个字符串数据。
+
+**范例：** 为CharSequence实例化
+
+```java
+package cn.ustb.demo;
+
+/**
+ * Created by MouseZhang on 2019/5/24.
+ */
+public class TestDemo {
+    public static void main(String[] args) {
+        String str = "Hello Every One";
+        StringBuffer buffer = new StringBuffer("Hello Kugou");
+        StringBuilder builder = new StringBuilder("Hello World");
+        print(str);
+        print(buffer);
+        print(builder);
+    }
+    public static void print(CharSequence seq) {
+        System.out.println(seq);
+    }
+}
+```
+
+**程序执行结果：**
+
+```
+Hello Every One
+Hello Kugou
+Hello World
+```
+
+以后只要发现有参数上使用了CharSequence最简单的做法就是传递一个字符串。
+
+- 全部代码
