@@ -34,6 +34,10 @@
 
 ![enter description here][1]
 
+[1]:https://github.com/MouseZhang/Java-Code-Notebook/blob/master/生产者与消费者模型/模型基本结构/ProducerAndConsumer.png
+
+
+
 > 此时的生产者希望可以生产出两类数据：
 >
 > - title = 皇马C罗，content = 欧冠之王，最佳射手~
