@@ -144,8 +144,8 @@ public class TestDemo {
 
 > 此时的代码已经可以实现交互了，但是通过最终的执行效果可以发现存在以下两个问题：
 >
-> - 问题一：数据发生了错位
-> - 问题二：数据并没有按照要求，生产一个取走一个
+> - 问题一：数据发生了错位；
+> - 问题二：数据并没有按照要求，生产一个取走一个。
 
 ### 1.2 解决数据同步问题
 
@@ -247,7 +247,7 @@ public class TestDemo {
 
 > 正常的开发流程里应该是生产出一个数据之后就取走一个数据，但是此时的结果会发现并没有按照预计的模式完成，因为同步造成了问题的严重性。如果想要解决此类问题就必须引入等待与唤醒机制，而等待与唤醒机制的操作是在Object类中定义的。
 
-|  NO  |                           方法名称                           |                 方法描述                 |
+|  No  |                           方法名称                           |                 方法描述                 |
 | :--: | :----------------------------------------------------------: | :--------------------------------------: |
 |  1   |     public final void wait() throws InterruptedException     |                等待，死等                |
 |  2   | public final void wait(long timeout) throws InterruptedException | 等待到若干毫秒之后如果还未唤醒，自动结束 |
@@ -669,4 +669,30 @@ public class TestDemo {
 本程序依然属于同一资源的数据共享操作。
 
 ---
+
+## 5 CharSequence接口
+
+### 5.1 接口定义
+
+> **CharSequence**是在JDK1.4时定义的接口，其描述的是一个字符序列标准操作接口。实际上，字符序列里面包含：String、StringBuffer、StringBuilder，下面来观察一下这三个类的定义形式：
+
+| String类(JDK1.0)定义：                                       | StringBuffer类(JDK1.0)定义：                                 | StringBuilder类(JDK1.5)定义：                                |
+| ------------------------------------------------------------ | :----------------------------------------------------------- | ------------------------------------------------------------ |
+| public final class String<br/> extends Object <br/>implements Serializable, Comparable<String>, CharSequence | public final class StringBuffer extends Object<br/>implements Serializable, Comparable<StringBuffer>, CharSequence | public final class StringBuilder<br/>extends Object<br/>implements Serializable, Comparable<StringBuilder>, CharSequence |
+
+> 可以发现这三个类实际上都是CharSequence接口的子类，而CharSequence接口中定义有如下几个方法：
+
+|  No  |           方法名称            |              方法描述              |
+| :--: | :---------------------------: | :--------------------------------: |
+|  1   | public char charAt(int index) |          根据索引获取字符          |
+|  2   |      public int length()      |           获取序列的长度           |
+|  3   |   public IntStream chars()    | 进行数据流分析（性能比使用循环高） |
+
+> StringBuffer与StringBuilder本质上都是相同的操作功能，但是两者有如下的不同：
+>
+> - StringBuffer是在JDK1.0的时候设计的，而StringBuilder是在JDK1.5时候设计的；
+> - StringBuffer类中的方法全部使用了同步处理，而StringBuilder类使用了异步处理；
+> - StringBuffer性能较低，但是属于线程安全的操作，而StringBuilder性能较高，属于非线程安全操作。
+
+—此处插入类图--
 
