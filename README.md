@@ -151,7 +151,7 @@ public class TestDemo {
 
 > 在多线程进行资源访问的时候一定需要进行同步处理，此时的问题需要通过同步的形式来进行访问。实际上当前最大的问题在于：当数据生产到一半的时候就有可能被消费者把数据取走。
 
-**范例：**修改程序结构追加同步处理
+**范例：** 修改程序结构追加同步处理
 
 ```java
 package cn.ustb.demo;
@@ -247,15 +247,15 @@ public class TestDemo {
 
 > 正常的开发流程里应该是生产出一个数据之后就取走一个数据，但是此时的结果会发现并没有按照预计的模式完成，因为同步造成了问题的严重性。如果想要解决此类问题就必须引入等待与唤醒机制，而等待与唤醒机制的操作是在Object类中定义的。
 
-|  序号  |                   方法名称                   |         方法描述         |
-| :--: | :--------------------------------------: | :------------------: |
-|  1   | public final void wait() throws InterruptedException |        等待，死等         |
+|  NO  |                           方法名称                           |                 方法描述                 |
+| :--: | :----------------------------------------------------------: | :--------------------------------------: |
+|  1   |     public final void wait() throws InterruptedException     |                等待，死等                |
 |  2   | public final void wait(long timeout) throws InterruptedException | 等待到若干毫秒之后如果还未唤醒，自动结束 |
-|  3   | public final void wait(long timeout, int nanos) throws InterruptedException |    等待，并设置等待到超时时间     |
-|  4   |        public final void notify()        |      唤醒第一个等待线程       |
-|  5   |      public final void notifyAll()       |   唤醒所有的线程，优先级高的先执行   |
+|  3   | public final void wait(long timeout, int nanos) throws InterruptedException |        等待，并设置等待到超时时间        |
+|  4   |                  public final void notify()                  |            唤醒第一个等待线程            |
+|  5   |                public final void notifyAll()                 |     唤醒所有的线程，优先级高的先执行     |
 
-**范例：**利用等待与唤醒机制实现多线程的控制
+**范例：** 利用等待与唤醒机制实现多线程的控制
 
 ```java
 package cn.ustb.demo;
