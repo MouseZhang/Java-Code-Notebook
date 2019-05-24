@@ -755,7 +755,126 @@ Hello World
 
 **范例：** 观察传统代码的问题
 
-```
+```java
+package cn.ustb.demo;
+
+/**
+ * Created by MouseZhang on 2019/5/24.
+ */
+
+class Message {
+    class Connect {
+        public boolean build() {
+            System.out.println("【Connect】建立网络连接...");
+            return true;
+        }
+
+        public void close() {
+            System.out.println("【Connect】关闭连接，释放网络资源...");
+        }
+    }
+
+    public void send(String msg) {
+        Connect conn = new Connect();
+        try {
+            if (conn.build()) {
+                if (true) {
+                    throw new RuntimeException("抛出一个异常");
+                }
+                System.out.println("【消息发送】" + msg);
+            }
+        } finally {
+            conn.close(); // 最终都执行关闭操作
+        }
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        Message message = new Message();
+        message.send("github.com");
+    }
+}
 
 ```
 
+**程序执行结果：**
+
+```
+【Connect】建立网络连接...
+Exception in thread "main" 【Connect】关闭连接，释放网络资源...
+java.lang.RuntimeException: 抛出一个异常
+	at cn.ustb.demo.Message.send(TestDemo.java:24)
+	at cn.ustb.demo.TestDemo.main(TestDemo.java:37)
+```
+
+### 6.2 接口定义
+
+> 此时的代码每一次释放资源的同时都必须明确地调用close()方法，这样的处理逻辑过于繁琐。为了简化操作，在这个基础上，从JDK1.7开始追加了一个新的**AutoCloseable**接口，用于自动关闭：
+
+```java
+public interface AutoCloseable {
+    public void close() throws Exception;
+}
+```
+
+要想使用自动关闭处理，必须严格遵照语法要求，也就是说需要修改已知的异常处理结构，格式为：
+
+```java
+try (AutoCloseable接口子类 对象 = new 类()) {
+    // 编写相应的处理方法
+} catch (Exception e) {}
+```
+
+**范例：** 实现自动关闭处理
+
+```java
+package cn.ustb.demo;
+
+/**
+ * Created by MouseZhang on 2019/5/24.
+ */
+
+class Message {
+    class Connect implements AutoCloseable {
+        public boolean build() {
+            System.out.println("【Connect】建立网络连接...");
+            return true;
+        }
+
+        public void close() throws Exception {
+            System.out.println("【Connect】关闭连接，释放网络资源...");
+        }
+    }
+
+    public void send(String msg) {
+        try (Connect conn = new Connect()) {
+            if (conn.build()) {
+                if (true) {
+                    throw new RuntimeException("抛出一个异常");
+                }
+                System.out.println("【消息发送】" + msg);
+            }
+        } catch (Exception e) {
+            System.out.println("产生异常，进行异常处理！");
+        }
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        Message message = new Message();
+        message.send("github.com");
+    }
+}
+```
+
+**程序执行结果：**
+
+```
+【Connect】建立网络连接...
+【Connect】关闭连接，释放网络资源...
+产生异常，进行异常处理！
+```
+
+使用AutoCloseable可以实现自动地资源释放处理操作，在以后的Java IO、数据库编程和网络编程也会经常使用此接口。
