@@ -17,9 +17,9 @@ class AnswerThread implements Callable<String> {
             String result = null;
             if (this.flag == false) { // 表示可以抢答
                 this.flag = true;
-                result = " [" + Thread.currentThread().getName() + "] 抢答成功！";
+                result = "【" + Thread.currentThread().getName() + "】抢答成功！";
             } else {
-                result = " [" + Thread.currentThread().getName() + "] 抢答失败！";
+                result = "【" + Thread.currentThread().getName() + "】抢答失败！";
             }
             return result;
         }
