@@ -22,7 +22,7 @@ class Resource {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println(" [" + Thread.currentThread().getName() + "] 电脑生产完成：" + this.computer);
+        System.out.println("【" + Thread.currentThread().getName() + "】电脑生产完成：" + this.computer);
         super.notify();
     }
 
@@ -39,7 +39,7 @@ class Resource {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println(" [" + Thread.currentThread().getName() + "] 取走电脑：" + this.computer);
+        System.out.println("【" + Thread.currentThread().getName() + "】取走电脑：" + this.computer);
         this.computer = null; // 清空内容
         super.notify();
     }
