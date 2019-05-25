@@ -820,7 +820,7 @@ public interface AutoCloseable {
 }
 ```
 
-要想使用自动关闭处理，必须严格遵照语法要求，也就是说需要修改已知的异常处理结构，格式为：
+> 要想使用自动关闭处理，必须严格遵照语法要求，也就是说需要修改已知的异常处理结构，格式为：
 
 ```java
 try (AutoCloseable接口子类 对象 = new 类()) {
@@ -889,7 +889,7 @@ public class TestDemo {
 
 ### 7.1 问题来源
 
-在任意一个类进行对象创建的时候一定会调用构造方法，利用构造方法进行对象属性的初始化操作，但是所有类对象在不使用的时候也需要进行一个处理，那么早期的处理使用的都是Object中的finalize()方法。
+> 在任意一个类进行对象创建的时候一定会调用构造方法，利用构造方法进行对象属性的初始化操作，但是所有类对象在不使用的时候也需要进行一个处理，那么早期的处理使用的都是Object中的finalize()方法。
 
 **范例：** 传统对象回收处理
 
@@ -900,8 +900,8 @@ package cn.ustb.demo;
  * Created by MouseZhang on 2019/5/24.
  */
 
-class Message {
-    public Message() {
+class Member {
+    public Member() {
         System.out.println("【对象实例化时调用】电闪雷鸣，一代妖孽诞生！");
     }
 
@@ -915,8 +915,8 @@ class Message {
 
 public class TestDemo {
     public static void main(String[] args) {
-        Message message = new Message();
-        message = null; // 当前的对象已经不再拥有指向
+        Member member = new Member();
+        member = null; // 当前的对象已经不再拥有指向
         System.gc(); // 强制性进行回收
     }
 }
@@ -929,7 +929,64 @@ public class TestDemo {
 【Member被回收】老天爷，要把妖孽收走了！
 ```
 
-- 全部代码
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/Cleaner类/问题来源/TestDemo.java)
 
 ### 7.2 Cleaner类定义
+
+> 在Object类中定义的finalize()方法，最为主要的功能是进行了对象回收前的处理操作，所以在这些操作里面传统的做法是进行方法的覆写，同时不管代码之中出现有任何错误，实际上都不会影响到程序的执行，但是传统的这种做法里面，会由于对象本身的回收或者产生死锁问题，从而导致对象的回收失败，所以finalize()方法在JDK1.9之后就被废除了。
+
+**范例：** 自定义回收处理
+
+```java
+package cn.ustb.demo;
+
+import java.lang.ref.Cleaner;
+
+/**
+ * Created by MouseZhang on 2019/5/24.
+ */
+
+class Member implements Runnable {
+    public Member() {
+        System.out.println("【对象实例化时调用】电闪雷鸣，一代妖孽诞生！");
+    }
+
+    @Override
+    public void run() {
+        System.out.println("【Member被回收】老天爷，要把妖孽收走了！");
+    }
+}
+
+class MemberCleaner implements AutoCloseable {
+    private static final Cleaner cleaner = Cleaner.create(); // 创建一个回收对象
+    private Cleaner.Cleanable cleanable; // 可以被回收的对象
+
+    public MemberCleaner(Member member) { // 处理要回收的对象
+        this.cleanable = cleaner.register(this, member); // 注册一个可回收对象
+    }
+
+    @Override
+    public void close() throws Exception { // 释放资源
+        this.cleanable.clean(); // 回收对象
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        Member member = new Member();
+        System.gc(); // 强制性进行回收
+        try (MemberCleaner mc = new MemberCleaner(member)) { // 进行对象回收的处理
+            // 如果有需求则可以进行其他处理操作
+        } catch (Exception e) {
+        }
+    }
+}
+```
+
+**程序执行结果：**
+
+```
+【对象实例化时调用】电闪雷鸣，一代妖孽诞生！
+【Member被回收】老天爷，要把妖孽收走了！
+```
 
