@@ -996,6 +996,199 @@ public class TestDemo {
 
 > 以上操作是新一代的对象回收处理机制，它需要利用多线程的形式来实现回收处理，这样可以避免造成死锁或延误导致的对象回收异常问题。
 
-——生命周期—待画
+——生命周期—待画【【【【】】】】
 
 - [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/Cleaner类/Cleaner类定义/TestDemo.java)
+
+---
+
+## 18 奇偶数统计案例分析
+
+### 18.1 案例要求
+
+> 编写程序，当程序运行后，根据屏幕提示输入一个数字字符串，输入后统计有多少个奇数数字和偶数数字。
+
+### 18.2 案例分析与实现
+
+——类图【【【【【】】】】】】
+
+> 在进行统计的时候肯定要将输入的字符串进行拆分处理，但是面对拆分必须清楚要拆分的类型：
+>
+> - 可以将字符串利用split()方法拆分为一个字符串的对象数组，将字符串数据的内容取出，而后利用Integer转型后除2；
+> - 可以将字符串利用toCharArray()方法拆分为字符数组，减少垃圾空间，字符直接判断，避免转型。
+
+**范例：** 定义数据的输入标准
+
+```java
+package cn.ustb.service;
+
+/**
+ * Created by MouseZhang on 2019/5/30.
+ */
+public interface IInputData {
+    /**
+     * 实现字符串数据的输入
+     *
+     * @param prompt 输入时的提示信息
+     * @return 返回一个输入的字符串（可以为空）
+     */
+    public String getString(String prompt);
+
+    /**
+     * 实现字符串数据的输入
+     *
+     * @param prompt 输入时的提示信息
+     * @return 返回一个不为空的字符串
+     */
+    public String getStringNotNull(String prompt);
+}
+```
+
+**范例：** 定义键盘数据输入类
+
+```java
+package cn.ustb.service;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+/**
+ * Created by MouseZhang on 2019/5/30.
+ */
+public class KeyboardInputData implements IInputData {
+    private static final BufferedReader INPUT = new BufferedReader(new InputStreamReader(System.in));
+
+    @Override
+    public String getString(String prompt) {
+        System.out.println(prompt);
+        String value = null;
+        try {
+            value = INPUT.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return value;
+    }
+
+    @Override
+    public String getStringNotNull(String prompt) {
+        boolean flag = true;
+        String value = null;
+        while (flag) {
+            value = this.getString(prompt);
+            if (!(value == null || "".equals(value))) {
+                flag = false;
+            } else {
+                System.err.println("输入的数据不允许为空！");
+            }
+        }
+        return value;
+    }
+}
+```
+
+**范例：** 定义一个专属的工厂类，隐藏实现子类
+
+```java
+package cn.ustb.factory;
+
+import cn.ustb.service.IInputData;
+import cn.ustb.service.KeyboardInputData;
+
+/**
+ * Created by MouseZhang on 2019/5/30.
+ */
+public class Factory {
+    private Factory() {
+    }
+
+    public static IInputData getInputDataInstance() {
+        return new KeyboardInputData();
+    }
+}
+```
+
+**范例：** 定义一个统计的操作类
+
+```java
+package cn.ustb.service;
+
+import cn.ustb.factory.Factory;
+
+/**
+ * Created by MouseZhang on 2019/5/30.
+ */
+public class Stat {
+    private int odd; // 保存奇数个数
+    private int even; // 保存偶数个数
+    private String inputData; // 保存输入的字符串
+    private IInputData input = Factory.getInputDataInstance();
+
+    public void input() { // 数据输入操作
+        boolean flag = true; // 循环标记
+        while (flag) {
+            String value = input.getStringNotNull("请输入一串数字：");
+            if (!value.matches("\\d+")) {
+                System.err.println("输入的内容必须是一串数字，请重新输入！");
+            } else {
+                this.inputData = value;
+                flag = false;
+            }
+        }
+    }
+
+    public void cal() { // 进行最终的统计计算
+        if (this.inputData != null) { // 已经输入过数据
+            char[] data = this.inputData.toCharArray();
+            for (int i = 0; i < data.length; i++) {
+                if (data[i] == '0' || data[i] == '2' || data[i] == '4' || data[i] == '6' || data[i] == '8') {
+                    this.even++;
+                } else {
+                    this.odd++;
+                }
+            }
+        }
+    }
+
+    public int getOdd() {
+        return this.odd;
+    }
+
+    public int getEven() {
+        return this.even;
+    }
+}
+```
+
+**范例：** 编写测试代码进行功能功能调用
+
+```java
+package cn.ustb.demo;
+
+import cn.ustb.service.Stat;
+
+/**
+ * Created by MouseZhang on 2019/5/30.
+ */
+public class TestDemo {
+    public static void main(String[] args) throws Exception {
+        Stat stat = new Stat();
+        stat.input(); // 输入数据
+        stat.cal(); // 统计计算
+        System.out.println("奇书个数：" + stat.getOdd() + "、偶数个数：" + stat.getEven());
+    }
+}
+```
+
+**程序执行结果：**
+
+```
+请输入一串数字：
+213233244531253665436577
+奇书个数：14、偶数个数：10
+```
+
+> 面向对象的解决方案绝对不是直接在主方法上编写代码，而是要有合理的类结构设计。
+
+- 全部代码
