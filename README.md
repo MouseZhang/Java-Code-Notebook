@@ -990,3 +990,8 @@ public class TestDemo {
 【Member被回收】老天爷，要把妖孽收走了！
 ```
 
+> 以上操作是新一代的对象回收处理机制，它需要利用多线程的形式来实现回收处理，这样可以避免造成死锁或延误导致的对象回收异常问题。
+
+——生命周期—待画
+
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/Cleaner类/Cleaner类定义/TestDemo.java)
