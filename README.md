@@ -1367,5 +1367,5 @@ TOM:89|JERRY:90|TONY:95
 
 > 功能类结构的设计是整个项目的关键，客户端只需要保持简单调用即可。
 
-- 全部代码
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/tree/master/数据排序案例分析)
 
