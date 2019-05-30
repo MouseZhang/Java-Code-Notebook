@@ -1191,4 +1191,9 @@ public class TestDemo {
 
 > 面向对象的解决方案绝对不是直接在主方法上编写代码，而是要有合理的类结构设计。
 
-- 全部代码
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/tree/master/奇偶数统计案例分析)
+
+---
+
+## 19 数据排序案例分析
+
