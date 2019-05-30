@@ -1196,3 +1196,176 @@ public class TestDemo {
 ---
 
 ## 19 数据排序案例分析
+
+### 19.1 案例要求
+
+> 从键盘输入以下的数据：“TOM:89|JERRY:90|TONY:95”，数据格式为“姓名:成绩|姓名:成绩|姓名:成绩”，对输入的内容按成绩进行排序，并将排序结果按照成绩由高到低排序。
+
+### 19.2 案例分析与实现
+
+——类图【【【【【】】】】】】
+
+**范例：** 创建学生信息类，并实现Comparable接口
+
+```java
+package cn.ustb.co;
+
+/**
+ * Created by MouseZhang on 2019/5/30.
+ */
+public class Student implements Comparable<Student> {
+    private String name;
+    private double score;
+
+    public Student(String name, double score) {
+        this.name = name;
+        this.score = score;
+    }
+
+    @Override
+    public int compareTo(Student o) {
+        if (this.score < o.score) {
+            return 1;
+        } else if (this.score > o.score) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "姓名：" + this.name + "、成绩：" + this.score;
+    }
+}
+```
+
+ **范例：** 定义正则验证器
+
+```java
+package cn.ustb.validate.impl;
+
+import cn.ustb.validate.IValidator;
+
+/**
+ * Created by MouseZhang on 2019/5/30.
+ */
+public class RegexValidator implements IValidator { // 正则验证器
+    private String regex;
+
+    public RegexValidator(String regex) {
+        this.regex = regex;
+    }
+
+    @Override
+    public boolean check(String value) {
+        if (value == null || "".equals(value)) {
+            return false;
+        }
+        return value.matches(this.regex);
+    }
+}
+```
+
+**范例：** 工厂类中注册新的接口实例获取操作
+
+```java
+package cn.ustb.factory;
+
+import cn.ustb.validate.IValidator;
+import cn.ustb.validate.impl.RegexValidator;
+
+/**
+ * Created by MouseZhang on 2019/5/30.
+ */
+public class Factory {
+    private Factory() {}
+    public static IValidator getValidatorInstance(String regex) {
+        return new RegexValidator(regex);
+    }
+}
+```
+
+**范例：** 定义程序的主体类
+
+```java
+package cn.ustb.service;
+
+import cn.ustb.co.Student;
+import cn.ustb.factory.Factory;
+import cn.ustb.validate.IValidator;
+
+import java.util.Arrays;
+
+/**
+ * Created by MouseZhang on 2019/5/30.
+ */
+public class MainService { //
+    private IInputData input = Factory.getInputDataInstance();
+    private IValidator validator = Factory.getValidatorInstance("([a-zA-Z]+:\\d{1,3}(\\.\\d{1,2})?\\|?)+");
+    private String inputData;
+    private Student[] students;
+
+    public void input() {
+        boolean flag = true;
+        while (flag) {
+            String value = this.input.getStringNotNull("请输入统计记录（格式：\"姓名:成绩|姓名:成绩|...\"）：");
+            if (this.validator.check(value)) { // 验证通过
+                this.inputData = value;
+                this.handleData(); // 进行数据处理
+                flag = false; // 结束循环
+            } else {
+                System.err.println("数据格式输入错误，请重新输入！");
+            }
+        }
+    }
+
+    private void handleData() {
+        String[] result = this.inputData.split("\\|");
+        this.students = new Student[result.length];
+        for (int i = 0; i < students.length; i++) {
+            String[] temp = result[i].split(":");
+            students[i] = new Student(temp[0], Double.parseDouble(temp[1]));
+        }
+        Arrays.sort(this.students);
+    }
+
+    public Student[] getStudents() {
+        return this.students;
+    }
+}
+```
+
+**范例：** 编写测试程序
+
+```java
+package cn.ustb.demo;
+
+import cn.ustb.service.MainService;
+
+import java.util.Arrays;
+
+/**
+ * Created by MouseZhang on 2019/5/30.
+ */
+public class TestDemo {
+    public static void main(String[] args) throws Exception { // TOM:89|JERRY:90|TONY:95
+        MainService main = new MainService();
+        main.input(); // 接收输入数据
+        System.out.println(Arrays.toString(main.getStudents()));
+    }
+}
+```
+
+**程序执行结果：**
+
+```
+请输入统计记录（格式："姓名:成绩|姓名:成绩|..."）：
+TOM:89|JERRY:90|TONY:95
+[姓名：TONY、成绩：95.0, 姓名：JERRY、成绩：90.0, 姓名：TOM、成绩：89.0]
+```
+
+> 功能类结构的设计是整个项目的关键，客户端只需要保持简单调用即可。
+
+- 全部代码
+
