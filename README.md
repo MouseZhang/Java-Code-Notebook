@@ -1522,4 +1522,7 @@ user/12345
 
 > 该程序设计的登录验证结构除了可以使用固定信息数值验证意外，实际上也可以实现基于数据库的登录验证。
 
-- 全部代码
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/tree/master/用户登录案例分析)
+
+---
+
