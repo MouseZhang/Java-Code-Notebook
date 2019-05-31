@@ -1375,7 +1375,7 @@ TOM:89|JERRY:90|TONY:95
 
 ### 20.1 案例要求
 
-> 完成系统登录程序，从命令行输入用户名和密码。如果没有输入用户名和密码，则提示用户输入用户名和密码；如果输入了用户名但是没有输入密码，则提示用户输入密码；然后判断用户名是否为user，密码是否是hello。正确则提示登录成功，错误则显示登录失败的信息，要求用户再次输入用户名和密码，连续3次输入错误后系统退出。
+> 完成系统登录程序，从命令行输入用户名和密码。如果没有输入用户名和密码，则提示用户输入用户名和密码；如果输入了用户名但是没有输入密码，则提示用户输入密码；然后判断用户名是否为user，密码是否是12345。正确则提示登录成功，错误则显示登录失败的信息，要求用户再次输入用户名和密码，连续3次输入错误后系统退出。
 
 ### 20.2 案例分析与实现
 
@@ -1384,30 +1384,142 @@ TOM:89|JERRY:90|TONY:95
 **范例：** 增加一个登录验证处理程序
 
 ```java
+package cn.ustb.service;
 
+/**
+ * Created by MouseZhang on 2019/5/31.
+ */
+public interface ILoginService {
+    public boolean login();
+}
 ```
 
 **范例：** 定义登录为固定信息时的子类
 
 ```java
+package cn.ustb.service.impl;
 
+import cn.ustb.service.ILoginService;
+
+/**
+ * Created by MouseZhang on 2019/5/31.
+ */
+public class ValueLoginService implements ILoginService {
+    private String username;
+    private String password;
+
+    public ValueLoginService(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    @Override
+    public boolean login() {
+        return "user".equals(this.username) && "12345".equals(this.password);
+    }
+}
 ```
 
 **范例：** 追加一个新的工厂类配置
 
 ```java
+package cn.ustb.factory;
 
+import cn.ustb.service.ILoginService;
+import cn.ustb.service.impl.ValueLoginService;
+
+/**
+ * Created by MouseZhang on 2019/5/31.
+ */
+public class Factory {
+    private Factory() {
+    }
+
+    public static ILoginService getLoginServiceInstance(String username, String password) {
+        return new ValueLoginService(username, password);
+    }
+}
 ```
 
 **范例：** 创建主服务类
 
 ```java
+package cn.ustb.service;
 
+import cn.ustb.factory.Factory;
+
+/**
+ * Created by MouseZhang on 2019/5/31.
+ */
+public class MainService {
+    private IInputData input = Factory.getInputDataInstance();
+    private String username;
+    private String password;
+    private static int count = 0; // 记录登录次数
+
+    public void input() { // 实现数据的输入处理
+        String content = this.input.getStringNotNull("请输入登录用户名：");
+        if (content.contains("/")) { // 如果输入用户名和密码
+            String[] result = content.split("/");
+            if (!content.endsWith("/")) {
+                if (result.length == 2) { // 长度正确
+                    username = result[0];
+                    password = result[1];
+                }
+            } else {
+                this.username = result[0];
+                this.password = this.input.getStringNotNull("请输入登录密码：");
+            }
+        } else {  // 只输入了用户名
+            this.username = content;
+            this.password = this.input.getStringNotNull("请输入登录密码：");
+        }
+    }
+
+    public String login() {
+        ILoginService loginService = Factory.getLoginServiceInstance(this.username, this.password);
+        if (count >= 2) {
+            return "登录尝试次数过多，无法登录，程序退出！";
+        }
+        if (loginService.login()) {
+            return "登录成功，欢迎" + this.username + "光临！";
+        } else {
+            System.err.println("登录失败，错误的用户名和密码！");
+            count++;
+            this.input(); // 重新进行登录输入
+            return this.login();
+        }
+    }
+}
 ```
 
 **范例：** 编写测试程序
 
 ```java
+package cn.ustb.demo;
 
+import cn.ustb.service.MainService;
+
+/**
+ * Created by MouseZhang on 2019/5/31.
+ */
+public class TestDemo {
+    public static void main(String[] args) throws Exception {
+        MainService main = new MainService();
+        main.input(); // 获取输入信息
+        System.out.println(main.login());
+    }
+}
 ```
 
+**程序执行结果：**
+
+```
+请输入登录用户名：
+user/12345
+登录成功，欢迎user光临！
+```
+
+> 该程序设计的登录验证结构除了可以使用固定信息数值验证意外，实际上也可以实现基于数据库的登录验证。
+
+- 全部代码
