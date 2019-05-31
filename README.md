@@ -1762,5 +1762,7 @@ public class TestDemo {
 
 > 在整体实现的代码里面，所有的输入数据基本上都以字符串为主，在实际的开发中，字符串也是作为最主要的数据输入类型。
 
-- 全部代码
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/tree/master/选举投票案例分析)
+
+---
 
