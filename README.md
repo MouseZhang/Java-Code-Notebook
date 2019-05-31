@@ -1526,3 +1526,241 @@ user/12345
 
 ---
 
+## 21 选举投票案例分析
+
+### 21.1 案例要求
+
+> 一个班采用民主投票方法推选班长，班长候选人共4位，每个人姓名及代号分别是“张三  1；李四  2；王五  3；赵六  4”。程序操作员将每张选票上所填的代号（1、2、3或4）循环输入电脑，输入数字0结束输入，然后将所有候选人的得票情况显示出来，并显示最终当选者的信息，具体要求如下：
+>
+> - 要求用面向对象方法，编写学生类Student，将候选人姓名、代号和票数保存到学生类中，并实现相应的getter 和 setter方法；
+> - 输入数据前，显示出各位候选人的代号及姓名（提示，建立一个候选人类型数组）；
+> - 循环执行接收键盘输入的班长候选人代号，直到输入的数字为0，结束选票的输入工作；
+> - 在接收每次输入的选票后要求验证该选票是否有效，即如果输入的数不是0、1、2、3、4这5个数字之一，或者输入的是一串字母，应显示出错误提示信息“此选票无效，请输入正确的候选人代号！”，并继续等待输入；
+> - 输入结束后显示所有候选人的得票情况；
+> - 输出最终当选者的相关信息，参考样例如下所示。
+
+```
+1：张三【0票】
+2：李四【0票】
+3：王五【0票】
+4：赵六【0票】
+请输入班长候选人代号（数字0结束）：1
+请输入班长候选人代号（数字0结束）：1
+请输入班长候选人代号（数字0结束）：1
+请输入班长候选人代号（数字0结束）：2
+请输入班长候选人代号（数字0结束）：3
+请输入班长候选人代号（数字0结束）：4
+请输入班长候选人代号（数字0结束）：5
+此选票无效，请输入正确的候选人代号！
+请输入班长候选人代号（数字0结束）：hello
+此选票无效，请输入正确的候选人代号！
+请输入班长候选人代号（数字0结束）：0
+1：张三【4票】
+2：李四【1票】
+3：王五【1票】
+4：赵六【1票】
+投票最终结果：张三同学，最后以4票当选班长！
+```
+
+### 21.2 案例分析与实现
+
+——类图【【【【【】】】】】】
+
+**范例：** 定义候选人信息
+
+```java
+package cn.ustb.co;
+
+/**
+ * Created by MouseZhang on 2019/5/31.
+ */
+public class Student implements Comparable<Student> {
+    private int stuNo;
+    private String name;
+    private int vote;
+
+    public Student(int stuNo, String name, int vote) {
+        this.setStuNo(stuNo);
+        this.setName(name);
+        this.setVote(vote);
+    }
+
+    public int getStuNo() {
+        return stuNo;
+    }
+
+    public void setStuNo(int stuNo) {
+        this.stuNo = stuNo;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getVote() {
+        return vote;
+    }
+
+    public void setVote(int vote) {
+        this.vote = vote;
+    }
+
+    @Override
+    public int compareTo(Student o) {
+        if (this.vote < o.vote) {
+            return 1;
+        } else if (this.vote > o.vote) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return this.getStuNo() + "：" + this.getName() + "【" + this.getVote() + "】";
+    }
+}
+```
+
+**范例：** 修改IInputData接口的功能，追加数字的输入功能
+
+```java
+public int getIntNotNull(String prompt) {
+  boolean flag = true;
+  int number = 0;
+  while (flag) {
+    String value = this.getString(prompt); // 接收数据的输入
+    if (!(value == null || "".equals(value))) {
+      if (value.matches("\\d+")) { // 判断是数字
+        number = Integer.parseInt(value);
+        flag = false;
+      } else {
+        System.err.println("此选票无效，请输入正确的候选人代号！");
+      }
+    } else {
+      System.err.println("此选票无效，请输入正确的候选人代号！");
+    }
+  }
+  return number;
+}
+```
+
+**范例：** 定义投票管理类
+
+```java
+package cn.ustb.service;
+
+import cn.ustb.co.Student;
+import cn.ustb.factory.Factory;
+
+import java.util.Arrays;
+
+/**
+ * Created by MouseZhang on 2019/5/31.
+ */
+public class MainService {
+    private Student[] students = {new Student(1, "张三", 0), new Student(2, "李四", 0),
+            new Student(3, "王五", 0), new Student(4, "赵六", 0)};
+    private IInputData input = Factory.getInputDataInstance();
+    private boolean flag = true;
+
+    public MainService() {
+        this.show();
+        while (flag) {
+            this.vote();
+        }
+        this.show();
+        this.result();
+    }
+
+    public void show() { // 显示所有候选人信息
+        for (Student stu : this.students) {
+            System.out.println(stu);
+        }
+    }
+
+    public void vote() { // 开始投票
+        int num = input.getIntNotNull("请输入班长候选人代号（数字0结束）：");
+        switch (num) {
+            case 0: {
+                this.flag = false;
+                break;
+            }
+            case 1: {
+                this.students[0].setVote(this.students[0].getVote() + 1);
+                break;
+            }
+            case 2: {
+                this.students[1].setVote(this.students[1].getVote() + 1);
+                break;
+            }
+            case 3: {
+                this.students[2].setVote(this.students[2].getVote() + 1);
+                break;
+            }
+            case 4: {
+                this.students[3].setVote(this.students[3].getVote() + 1);
+                break;
+            }
+            default: {
+                System.out.println("此选票无效，请输入正确的候选人代号！");
+            }
+        }
+    }
+
+    public void result() {
+        Arrays.sort(this.students);
+        System.out.println("投票最终结果：" + this.students[0].getName() + "同学，最后以" + this.students[0].getVote() + "票当选班长！");
+    }
+}
+```
+
+**范例：** 编写测试程序
+
+```java
+package cn.ustb.demo;
+
+import cn.ustb.service.MainService;
+
+/**
+ * Created by MouseZhang on 2019/5/31.
+ */
+public class TestDemo {
+    public static void main(String[] args) throws Exception {
+        new MainService();
+    }
+}
+```
+
+**程序执行结果：**
+
+```
+1：张三【0】
+2：李四【0】
+3：王五【0】
+4：赵六【0】
+请输入班长候选人代号（数字0结束）：1
+请输入班长候选人代号（数字0结束）：1
+请输入班长候选人代号（数字0结束）：1
+请输入班长候选人代号（数字0结束）：2
+请输入班长候选人代号（数字0结束）：2
+请输入班长候选人代号（数字0结束）：3
+请输入班长候选人代号（数字0结束）：4
+请输入班长候选人代号（数字0结束）：1
+请输入班长候选人代号（数字0结束）：0
+1：张三【4】
+2：李四【2】
+3：王五【1】
+4：赵六【1】
+投票最终结果：张三同学，最后以4票当选班长！
+```
+
+> 在整体实现的代码里面，所有的输入数据基本上都以字符串为主，在实际的开发中，字符串也是作为最主要的数据输入类型。
+
+- 全部代码
+
