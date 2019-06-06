@@ -1824,6 +1824,8 @@ public class TestDemo {
 
 ———类图------
 
+- 全部代码
+
 ### 22.2 问题来源
 
 > 现在虽然实现了一个基础的工厂设计模式，但是实际上也存在有另外一个问题，如果要想扩充新的子类呢？那么此工厂类一定要发生变更。
@@ -1882,7 +1884,74 @@ public class TestDemo {
 【网络消息】：今天有重大新闻报道～
 ```
 
+- 全部代码
 
+### 22.3 问题解决
+
+> 实际上这一切问题产生的根源在于关键字“new”，关键字“new”是Java提供的原生的对象实例化支持，但是却需要固定的结构才可以使用。如果要想解决关键字“new”的问题，最好的做法就是利用反射机制。
+
+———类图------
+
+**范例：** 通过反射修改工厂
+
+```java
+package cn.ustb.demo;
+
+/**
+ * Created by MouseZhang on 2019/6/6.
+ */
+interface IMessage {
+    public void send(String msg);
+}
+
+class NewsPaper implements IMessage {
+    @Override
+    public void send(String msg) {
+        System.out.println("【报纸报道】：" + msg);
+    }
+}
+
+class NetMessage implements IMessage {
+    @Override
+    public void send(String msg) {
+        System.out.println("【网络消息】：" + msg);
+    }
+}
+
+class Factory {
+    private Factory() {
+    }
+
+    public static IMessage getInstance(String className) {
+        IMessage instance = null;
+        try {
+            instance = (IMessage) Class.forName(className).getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return instance;
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        IMessage message = Factory.getInstance("cn.ustb.demo.NetMessage"); // 获取指定接口实例
+        if (message != null) {
+            message.send("今天有重大新闻报道～");
+        }
+    }
+}
+```
+
+**程序执行结果：**
+
+```
+【网络消息】：今天有重大新闻报道～
+```
+
+> 那么此时所编写的工厂类就可以适应各种环境，来获取IMessage接口实例。
+
+- 全部代码
 
 ## 23 反射与单例设计模式
 
