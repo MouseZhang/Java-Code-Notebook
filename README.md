@@ -1953,6 +1953,109 @@ public class TestDemo {
 
 - [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/tree/master/反射与工厂设计模式/问题解决)
 
+------
+
 ## 23 反射与单例设计模式
+
+### 23.1 单例设计模式
+
+> 单例设计模式的核心本质在于，一个类在一个JVM进程之中只允许有一个实例化对象。单例模式根据设计情况分为两种：饿汉式单例、懒汉式单例，懒汉式的单例问题比较麻烦。
+
+**范例：** 饿汉式单例设计模式
+
+```java
+package cn.ustb.demo;
+
+/**
+ * Created by MouseZhang on 2019/6/7.
+ */
+class Singleton {
+    private static final Singleton INSTANCE = new Singleton();
+
+    private Singleton() {
+    }
+
+    public void print() {
+        System.out.println("饿汉式单例设计模式");
+    }
+
+    public static Singleton getInstance() {
+        return INSTANCE;
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        Singleton instance = Singleton.getInstance();
+        instance.print();
+    }
+}
+```
+
+**程序执行结果：**
+
+```
+饿汉式单例设计模式
+```
+
+> 之所以将其称为饿汉式的主要原因在于，Singleton里面会始终维持一个INSTANCE的实例化对象，而并不关心这个对象是否被使用。
+
+- 全部代码
+
+**范例：** 懒汉式单例设计模式
+
+```java
+package cn.ustb.demo;
+
+/**
+ * Created by MouseZhang on 2019/6/7.
+ */
+class Singleton {
+    private static Singleton instance;
+
+    private Singleton() {
+    }
+
+    public void print() {
+        System.out.println("懒汉式单例设计模式");
+    }
+
+    public static Singleton getInstance() {
+        if (instance == null) {
+            instance = new Singleton();
+        }
+        return instance;
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        Singleton instance = Singleton.getInstance();
+        instance.print();
+    }
+}
+```
+
+**程序执行结果：**
+
+```
+懒汉式单例设计模式
+```
+
+> 懒汉式单例模式的最大特点在于：第一次使用的时候才会进行实例化，不使用不进行实例化。
+
+- 全部代码
+
+### 23.2 问题来源
+
+**范例：** 观察懒汉式单例设计模式存在的问题
+
+```java
+
+```
+
+
+
+### 23.3 问题解决
 
 ## 24 反射与代理设计模式
