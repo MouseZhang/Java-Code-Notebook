@@ -2111,7 +2111,7 @@ public synchronized static Singleton getInstance() {
 
 > 此时利用同步操作解决了单例实例化对象的问题，但是随之而来的将是严重的性能问题。假如有十万个线程获取Singleton类的实例化对象，那么最终会造成十万个线程要依次同步等待后获取。
 
-- 全部代码
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/反射与单例设计模式/问题来源/TestDemo.java)
 
 ### 23.3 问题解决
 
@@ -2166,7 +2166,7 @@ public class TestDemo {
 
 > 此时的代码既保证了getInstance()方法的操作性能，也保护了Singleton类对象的实例化次数。
 
-- 全部代码
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/反射与单例设计模式/问题解决/TestDemo.java)
 
 ------
 
