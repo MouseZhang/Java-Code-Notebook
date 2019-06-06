@@ -1824,7 +1824,7 @@ public class TestDemo {
 
 ———类图------
 
-- 全部代码
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/tree/master/反射与工厂设计模式/工厂设计模式)
 
 ### 22.2 问题来源
 
@@ -1884,7 +1884,7 @@ public class TestDemo {
 【网络消息】：今天有重大新闻报道～
 ```
 
-- 全部代码
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/tree/master/反射与工厂设计模式/问题来源)
 
 ### 22.3 问题解决
 
@@ -1951,7 +1951,7 @@ public class TestDemo {
 
 > 那么此时所编写的工厂类就可以适应各种环境，来获取IMessage接口实例。
 
-- 全部代码
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/tree/master/反射与工厂设计模式/问题解决)
 
 ## 23 反射与单例设计模式
 
