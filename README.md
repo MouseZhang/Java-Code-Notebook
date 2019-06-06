@@ -1788,6 +1788,7 @@ interface IMessage {
 }
 
 class NewsPaper implements IMessage {
+    @Override
     public void send(String msg) {
         System.out.println("【报纸报道】：" + msg);
     }
@@ -1826,6 +1827,60 @@ public class TestDemo {
 ### 22.2 问题来源
 
 > 现在虽然实现了一个基础的工厂设计模式，但是实际上也存在有另外一个问题，如果要想扩充新的子类呢？那么此工厂类一定要发生变更。
+
+**范例：** 传统的子类扩充
+
+```java
+package cn.ustb.demo;
+
+/**
+ * Created by MouseZhang on 2019/6/6.
+ */
+interface IMessage {
+    public void send(String msg);
+}
+
+class NewsPaper implements IMessage {
+    @Override
+    public void send(String msg) {
+        System.out.println("【报纸报道】：" + msg);
+    }
+}
+
+class NetMessage implements IMessage {
+    @Override
+    public void send(String msg) {
+        System.out.println("【网络消息】：" + msg);
+    }
+}
+
+class Factory {
+    private Factory() {
+    }
+
+    public static IMessage getInstance(String className) {
+        if ("newspaper".equalsIgnoreCase(className)) {
+            return new NewsPaper();
+        } else if ("netmessage".equalsIgnoreCase(className)) {
+            return new NetMessage();
+        }
+        return null;
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        IMessage message = Factory.getInstance("NetMessage"); // 获取指定接口实例
+        message.send("今天有重大新闻报道～");
+    }
+}
+```
+
+**程序执行结果：**
+
+```
+【网络消息】：今天有重大新闻报道～
+```
 
 
 

@@ -14,6 +14,13 @@ class NewsPaper implements IMessage {
     }
 }
 
+class NetMessage implements IMessage {
+    @Override
+    public void send(String msg) {
+        System.out.println("【网络消息】：" + msg);
+    }
+}
+
 class Factory {
     private Factory() {
     }
@@ -21,6 +28,8 @@ class Factory {
     public static IMessage getInstance(String className) {
         if ("newspaper".equalsIgnoreCase(className)) {
             return new NewsPaper();
+        } else if ("netmessage".equalsIgnoreCase(className)) {
+            return new NetMessage();
         }
         return null;
     }
@@ -28,7 +37,7 @@ class Factory {
 
 public class TestDemo {
     public static void main(String[] args) {
-        IMessage message = Factory.getInstance("NewsPaper"); // 获取指定接口实例
+        IMessage message = Factory.getInstance("NetMessage"); // 获取指定接口实例
         message.send("今天有重大新闻报道～");
     }
 }
