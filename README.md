@@ -1771,6 +1771,64 @@ public class TestDemo {
 
 ## 22 反射与工厂设计模式
 
+### 22.1 工厂设计模式
+
+> 工厂设计模式出现的主要目的是为了解决接口对象实例化的处理问题，利用关键字“new”直接在客户端进行指定接口对象的实例化处理，会造成接口与指定子类之间的耦合问题，因此可以引入一个专门的过渡类，负责接口对象的实例化操作，这就属于工厂类。
+
+**范例：** 定义基础工厂类
+
+```java
+package cn.ustb.demo;
+
+/**
+ * Created by MouseZhang on 2019/6/6.
+ */
+interface IMessage {
+    public void send(String msg);
+}
+
+class NewsPaper implements IMessage {
+    public void send(String msg) {
+        System.out.println("【报纸报道】：" + msg);
+    }
+}
+
+class Factory {
+    private Factory() {
+    }
+
+    public static IMessage getInstance(String className) {
+        if ("newspaper".equalsIgnoreCase(className)) {
+            return new NewsPaper();
+        }
+        return null;
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        IMessage message = Factory.getInstance("NewsPaper"); // 获取指定接口实例
+        message.send("今天有重大新闻报道～");
+    }
+}
+```
+
+**程序执行结果：**
+
+```
+【报纸报道】：今天有重大新闻报道～
+```
+
+> 对于此时的代码，是属于Java面向对象编程的基本模型，因为只要是获取接口实例，应该都通过工厂类来完成，于是当前的类设计结构如下：
+
+———类图------
+
+### 22.2 问题来源
+
+> 现在虽然实现了一个基础的工厂设计模式，但是实际上也存在有另外一个问题，如果要想扩充新的子类呢？那么此工厂类一定要发生变更。
+
+
+
 ## 23 反射与单例设计模式
 
 ## 24 反射与代理设计模式
