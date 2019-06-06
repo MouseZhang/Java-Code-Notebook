@@ -2051,11 +2051,123 @@ public class TestDemo {
 **范例：** 观察懒汉式单例设计模式存在的问题
 
 ```java
+package cn.ustb.demo;
 
+/**
+ * Created by MouseZhang on 2019/6/7.
+ */
+class Singleton {
+    private static Singleton instance;
+
+    private Singleton() {
+        System.out.println("【Singleton类构造】实例化Singleton类对象");
+    }
+
+
+    public static Singleton getInstance() {
+        if (instance == null) {
+            instance = new Singleton();
+        }
+        return instance;
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) throws Exception {
+        for (int i = 0; i < 10; i++) {
+            new Thread(() -> {
+                Singleton instance = Singleton.getInstance();
+            }).start();
+        }
+    }
+}
 ```
 
+**程序执行结果：**
 
+```
+【Singleton类构造】实例化Singleton类对象
+【Singleton类构造】实例化Singleton类对象
+【Singleton类构造】实例化Singleton类对象
+【Singleton类构造】实例化Singleton类对象
+【Singleton类构造】实例化Singleton类对象
+... ...
+```
+
+> 单例设计模式的本质在于，一个JVM进程只允许有该类的一个实例化对象，但是一旦发现使用了多线程，并结合懒汉式单例时，程序代码中出现了对象的多次实例化，若想解决当前存在的问题，就是利用同步处理。
+
+———类图------
+
+**范例：** 追加同步
+
+```java
+public synchronized static Singleton getInstance() {
+    if (instance == null) {
+      instance = new Singleton();
+    }
+    return instance;
+}
+```
+
+> 此时利用同步操作解决了单例实例化对象的问题，但是随之而来的将是严重的性能问题。假如有十万个线程获取Singleton类的实例化对象，那么最终会造成十万个线程要依次同步等待后获取。
+
+- 全部代码
 
 ### 23.3 问题解决
+
+> 同步是否添加的决定性因素： **如果读取不要加同步，如果更新要加同步。**
+
+——leitu------
+
+**范例：** 解决懒汉式单例同步问题
+
+```java
+package cn.ustb.demo;
+
+/**
+ * Created by MouseZhang on 2019/6/7.
+ */
+class Singleton {
+    private static Singleton instance;
+
+    private Singleton() {
+        System.out.println("【Singleton类构造】实例化Singleton类对象");
+    }
+
+
+    public static Singleton getInstance() {
+        if (instance == null) {
+            synchronized (Singleton.class) {
+                if (instance == null) {
+                    instance = new Singleton();
+                }
+            }
+        }
+        return instance;
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) throws Exception {
+        for (int i = 0; i < 10; i++) {
+            new Thread(() -> {
+                Singleton instance = Singleton.getInstance();
+            }).start();
+        }
+    }
+}
+```
+
+**程序执行结果：**
+
+```
+【Singleton类构造】实例化Singleton类对象
+```
+
+> 此时的代码既保证了getInstance()方法的操作性能，也保护了Singleton类对象的实例化次数。
+
+- 全部代码
+
+------
 
 ## 24 反射与代理设计模式
