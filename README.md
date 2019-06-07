@@ -2701,7 +2701,7 @@ public static void setValue(Object object, Map<String, String> map) {
 
 > 此时实现了正常的级联类对象的反射实例化。
 
-- 全部代码
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/反射与简单Java类/多级对象实例化/BeanUtil.java)
 
 ### 25.6 多级属性赋值
 
@@ -2710,6 +2710,71 @@ public static void setValue(Object object, Map<String, String> map) {
 **范例：** 修改BeanUtil类
 
 ```java
+public static void setValue(Object object, Map<String, String> map) {
+    Iterator<Map.Entry<String, String>> iter = map.entrySet().iterator(); // 获取Iterator接口实例
+    while (iter.hasNext()) {
+        Map.Entry<String, String> entry = iter.next(); // 获取每一组数据
+        String fieldKey = null;
+        Object currentObject = object; // 设置一个当前的操作对象（后面会不断修改其引用）
+        try { // 防止某些成员输入错误而导致所有的成员赋值出错
+            if (entry.getKey().contains(".")) { // 此时就有可能出现有级联关系
+                // 依据"."进行拆分处理，而后依次判断，如果发现getter方法调用返回的是null，则利用setter实例化
+                String[] fieldSplit = entry.getKey().split("\\."); // 进行拆分处理操作
+                for (int i = 0; i < fieldSplit.length - 1; i++) { // 循环每一个属性
+                    Method getMethod = currentObject.getClass().getDeclaredMethod("get" + StringUtil.initcap(fieldSplit[i]));
+                    Object tempReturn = getMethod.invoke(currentObject);
+                    if (tempReturn == null) { // 当前的对象并未实例化，应该调用setter设置内容
+                        Class<?> currentType = currentObject.getClass().getDeclaredField(fieldSplit[i]).getType();
+                        Method setMethod = currentObject.getClass().getDeclaredMethod("set" + StringUtil.initcap(fieldSplit[i]), currentType);
+                        tempReturn = currentType.getDeclaredConstructor().newInstance();
+                        setMethod.invoke(currentObject, tempReturn);
+                    }
+                    currentObject = tempReturn;
+                }
+                fieldKey = entry.getKey().substring(entry.getKey().lastIndexOf(".") + 1); // 属性
+            } else {
+                fieldKey = entry.getKey(); // 直接获取属性名称
+            }
+            Field field = currentObject.getClass().getDeclaredField(fieldKey);
+            // 依据传入的属性名称（key）获取相应的setter方法，并利用Field获取方法参数类型
+            Method setMethod = currentObject.getClass().getDeclaredMethod("set" + StringUtil.initcap(fieldKey), field.getType());
+            setMethod.invoke(currentObject, convertValue(entry.getValue(), field)); // 反射调用setter方法并设置属性内容
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+**范例：** 编写测试程序
+
+```java
+package cn.ustb.demo;
+
+import cn.ustb.util.InputData;
+import cn.ustb.util.reflect.ObjectInstanceFactory;
+import cn.ustb.vo.Emp;
+
+/**
+ * Created by MouseZhang on 2019/6/7.
+ */
+public class TestDemo {
+    public static void main(String[] args) {
+        Emp emp = ObjectInstanceFactory.create(Emp.class, InputData.input());
+        System.out.println(emp);
+    }
+}
+```
+
+**程序执行结果：**
 
 ```
+Emp{empno=21095, ename='小张', job='办事员', age=22, hiredate=Sat Oct 15 00:00:00 CST 2005, sal=3580.27, dept=Dept{dname='软件开发部', loc='北京', company=Company{cname='USTB', createDate=Sun Apr 22 00:00:00 CST 1962}}}
+```
+
+> 此时的程序就可以实现最终的级联属性的设置，而且可以随意设置多级层次关系。
+
+- 全部代码
+
+----
 
