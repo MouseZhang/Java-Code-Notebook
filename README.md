@@ -2342,11 +2342,11 @@ public class TestDemo {
 
 > 实现的时候必须考虑所有类型的设计问题，因为该程序类可以实现各种简单Java类对象的创建操作。
 
-- 全部代码
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/tree/master/反射与简单Java类/自动赋值实现思路)
 
 ### 25.3 单级属性赋值
 
-
+> 所谓的单级属性指的是该类不存在有其它简单Java类的引用关联，在本类之中只考虑当前的常用类型，为了简化设计，本次先考虑当前类型是String的形式。
 
 ### 25.4 设置多种数据类型
 
