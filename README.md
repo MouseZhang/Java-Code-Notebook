@@ -2774,7 +2774,7 @@ Emp{empno=21095, ename='小张', job='办事员', age=22, hiredate=Sat Oct 15 00
 
 > 此时的程序就可以实现最终的级联属性的设置，而且可以随意设置多级层次关系。
 
-- 全部代码
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/tree/master/反射与简单Java类/多级属性赋值)
 
 ----
 
