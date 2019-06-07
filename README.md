@@ -28,6 +28,7 @@
 - [22 反射与工厂设计模式](#反射与工厂设计模式)
 - [23 反射与单例设计模式](#反射与单例设计模式)
 - [24 反射与代理设计模式](#反射与代理设计模式)
+- [25 反射与简单Java类](#反射与简单Java类)
 
 ---
 
@@ -2171,3 +2172,125 @@ public class TestDemo {
 ------
 
 ## 24 反射与代理设计模式
+
+----
+
+## 25 反射与简单Java类
+
+### 25.1 传统属性赋值弊端
+
+> 简单Java类最大的特点在于其主要进行数据的存储，并不进行任何复杂的业务判断，即：对于所谓的循环、分支等语句实际上在开发中是不会出现在简单Java类中的，现假设有如下的一个简单Java类。
+
+**范例：** 定义一个描述雇员信息的类
+
+```java
+package cn.ustb.vo;
+
+/**
+ * Created by MouseZhang on 2019/6/7.
+ */
+public class Emp {
+    private String ename;
+    private String job;
+
+    public String getEname() {
+        return ename;
+    }
+
+    public void setEname(String ename) {
+        this.ename = ename;
+    }
+
+    public String getJob() {
+        return job;
+    }
+
+    public void setJob(String job) {
+        this.job = job;
+    }
+
+    @Override
+    public String toString() {
+        return "Emp{" +
+                "ename='" + ename + '\'' +
+                ", job='" + job + '\'' +
+                '}';
+    }
+}
+```
+
+> 此时有了Emp类之后，肯定需要进行属性的设置，那么传统的属性设置必须依据对应的属性名称进行处理，现假设要操作的属性内容全部都在一个Map集合里（模拟输入类）。
+
+**范例：** 定义一个模拟输入类
+
+```java
+package cn.ustb.util;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Created by MouseZhang on 2019/6/7.
+ */
+public class InputData { // 模拟一个键盘的输入
+    public static Map<String, String> input() {
+        Map<String, String> map = new HashMap<String, String>(); // key为属性名称，value为属性内容
+        map.put("ename", "小张");
+        map.put("job", "办事员");
+        return map;
+    }
+}
+```
+
+> 此时模拟了一个键盘输入的处理操作，其中Map集合的key和雇员类中的属性名称是相同的。
+
+——tu ----
+
+**范例：** 实现Map集合向Emp对象的数据保存
+
+```java
+package cn.ustb.demo;
+
+import cn.ustb.util.InputData;
+import cn.ustb.vo.Emp;
+
+import java.util.Map;
+
+/**
+ * Created by MouseZhang on 2019/6/7.
+ */
+public class TestDemo {
+    public static void main(String[] args) {
+        Emp emp = new Emp();
+        Map<String, String> input = InputData.input(); // 获取输入数据
+        emp.setEname(input.get("ename"));
+        emp.setJob(input.get("job"));
+        System.out.println(emp);
+    }
+}
+```
+
+**程序执行结果：**
+
+```
+Emp{ename='小张', job='办事员'}
+```
+
+——图----
+
+> 思考下面两个问题：
+>
+> - 现在Emp类中是两个属性，但是如果这个类提供有100个属性时，意味着setter需要编写100次；
+> - 那么如果要想进行一些合理的设计，必然要求可以满足于所有的简单Java类。
+
+- 全部代码
+
+### 25.2 自动赋值实现思路
+
+### 25.3 单级属性赋值
+
+### 25.4 设置多种数据类型
+
+### 25.5 多级对象实例化
+
+### 25.6 多级属性赋值
