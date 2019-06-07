@@ -2283,7 +2283,7 @@ Emp{ename='小张', job='办事员'}
 > - 现在Emp类中是两个属性，但是如果这个类提供有100个属性时，意味着setter需要编写100次；
 > - 那么如果要想进行一些合理的设计，必然要求可以满足于所有的简单Java类。
 
-- 全部代码
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/tree/master/反射与简单Java类/传统属性赋值弊端)
 
 ### 25.2 自动赋值实现思路
 
