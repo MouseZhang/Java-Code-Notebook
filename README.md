@@ -2651,6 +2651,65 @@ Emp{empno=21095, ename='小张', job='办事员', age=22, hiredate=Sat Oct 15 00
 
 ### 25.5 多级对象实例化
 
+> 对于当前结构主要是针对Emp的形式来完成的，所以在输入数据的时候，Map集合中key的数据全部都是单级属性，但是在一些时候也可能继续进行其它引用数据的设置。现假设有如下的关系：一个雇员属于一个部门，一个部门属于一个公司，因此可以进行如下三个类的设计：
 
+—biaoge ----
+
+——tu ----
+
+> 如果此时要进行级联数据的设计，则必须对输入数据的结构上有所要求，可以修改如下的输入数据格式。
+
+—tu---
+
+> 所以要想完成后续的设计，那么就必须考虑当前类对象实例化的问题，级联对象的实例化必须优先设计，但是一定要保证，在一个简单Java类赋值过程之中，该实例化对象只能够实例化一次，并且简单Java类要提供有无参构造方法。
+
+**范例：** 修改BeanUtil类
+
+```java
+public static void setValue(Object object, Map<String, String> map) {
+    Iterator<Map.Entry<String, String>> iter = map.entrySet().iterator(); // 获取Iterator接口实例
+    while (iter.hasNext()) {
+        Map.Entry<String, String> entry = iter.next(); // 获取每一组数据
+        try { // 防止某些成员输入错误而导致所有的成员赋值出错
+            if (entry.getKey().contains(".")) { // 此时就有可能出现有级联关系
+                // 依据"."进行拆分处理，而后依次判断，如果发现getter方法调用返回的是null，则利用setter实例化
+                String[] fieldSplit = entry.getKey().split("\\."); // 进行拆分处理操作
+                Object currentObject = object; // 设置一个当前的操作对象（后面会不断修改其引用）
+                for (int i = 0; i < fieldSplit.length - 1; i++) { // 循环每一个属性
+                    Method getMethod = currentObject.getClass().getDeclaredMethod("get" + StringUtil.initcap(fieldSplit[i]));
+                    Object tempReturn = getMethod.invoke(currentObject);
+                    if (tempReturn == null) { // 当前的对象并未实例化，应该调用setter设置内容
+                        Class<?> currentType = currentObject.getClass().getDeclaredField(fieldSplit[i]).getType();
+                        Method setMethod = currentObject.getClass().getDeclaredMethod("set" + StringUtil.initcap(fieldSplit[i]), currentType);
+                        tempReturn = currentType.getDeclaredConstructor().newInstance();
+                        setMethod.invoke(currentObject, tempReturn);
+                    }
+                    currentObject = tempReturn;
+                }
+            } else {
+                Field field = object.getClass().getDeclaredField(entry.getKey());
+                // 依据传入的属性名称（key）获取相应的setter方法，并利用Field获取方法参数类型
+                Method setMethod = object.getClass().getDeclaredMethod("set" + StringUtil.initcap(entry.getKey()), field.getType());
+                setMethod.invoke(object, convertValue(entry.getValue(), field)); // 反射调用setter方法并设置属性内容
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+> 此时实现了正常的级联类对象的反射实例化。
+
+- 全部代码
 
 ### 25.6 多级属性赋值
+
+> 现在既然可以实现级联对象的实例化处理，那么自然也就应该可以针对级联属性赋值进行处理，级联属性赋值最关键的问题在于如何获取要操作的对象。
+
+**范例：** 修改BeanUtil类
+
+```java
+
+```
+
