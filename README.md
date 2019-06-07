@@ -2461,10 +2461,193 @@ Emp{ename='小张', job='办事员'}
 **范例：** 在BeanUtil类中定义一个数值转换方法
 
 ```java
-
+/**
+ * 实现字符串数据向指定数据类型的转换
+ * @param value 接收输入的字符串数据内容，所有的内容均为String
+ * @param field 要转换的目标类型
+ * @return 转换的数据结构
+ */
+private static Object convertValue(String value, Field field) {
+    String fieldName = field.getType().getName();
+    if ("java.lang.String".equalsIgnoreCase(fieldName)) {
+        return value; // 不转换，直接返回
+    }
+    if ("int".equalsIgnoreCase(fieldName) || "java.lang.Integer".equalsIgnoreCase(fieldName)) {
+        try {
+            return Integer.parseInt(value);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+    if ("long".equalsIgnoreCase(fieldName) || "java.lang.Long".equalsIgnoreCase(fieldName)) {
+        try {
+            return Long.parseLong(value);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+    if ("double".equalsIgnoreCase(fieldName) || "java.lang.Double".equalsIgnoreCase(fieldName)) {
+        try {
+            return Double.parseDouble(value);
+        } catch (Exception e) {
+            return 0.0;
+        }
+    }
+    if ("java.util.Date".equalsIgnoreCase(fieldName)) {
+        if (value == null || "".equals(value)) {
+            return null;
+        } else {
+            SimpleDateFormat sdf = null;
+            if (value.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                sdf = new SimpleDateFormat("yyyy-MM-dd");
+            } else if (value.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}")) {
+                sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            }
+            try {
+                return sdf.parse(value);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+    }
+    return null;
+}
 ```
 
+**范例：** 修改Emp类定义，追加新的属性
 
+```java
+package cn.ustb.vo;
+
+import java.util.Date;
+
+/**
+ * Created by MouseZhang on 2019/6/7.
+ */
+public class Emp {
+    private Long empno;
+    private String ename;
+    private String job;
+    private Integer age;
+    private Date hiredate;
+    private Double sal;
+
+    public Long getEmpno() {
+        return empno;
+    }
+
+    public void setEmpno(Long empno) {
+        this.empno = empno;
+    }
+
+    public String getEname() {
+        return ename;
+    }
+
+    public void setEname(String ename) {
+        this.ename = ename;
+    }
+
+    public String getJob() {
+        return job;
+    }
+
+    public void setJob(String job) {
+        this.job = job;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public Date getHiredate() {
+        return hiredate;
+    }
+
+    public void setHiredate(Date hiredate) {
+        this.hiredate = hiredate;
+    }
+
+    public Double getSal() {
+        return sal;
+    }
+
+    public void setSal(Double sal) {
+        this.sal = sal;
+    }
+
+    @Override
+    public String toString() {
+        return "Emp{" +
+                "empno=" + empno +
+                ", ename='" + ename + '\'' +
+                ", job='" + job + '\'' +
+                ", age=" + age +
+                ", hiredate=" + hiredate +
+                ", sal=" + sal +
+                '}';
+    }
+}
+```
+
+**范例：** 修改输入数据部分
+
+```java
+package cn.ustb.util;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Created by MouseZhang on 2019/6/7.
+ */
+public class InputData { // 模拟一个键盘的输入
+    public static Map<String, String> input() {
+        Map<String, String> map = new HashMap<String, String>(); // key为属性名称，value为属性内容
+        map.put("empno", "21095");
+        map.put("ename", "小张");
+        map.put("job", "办事员");
+        map.put("hiredate", "2005-10-15");
+        map.put("age", "22");
+        map.put("sal", "3580.27");
+        return map;
+    }
+}
+```
+
+**范例：** 编写测试程序
+
+```java
+package cn.ustb.demo;
+
+import cn.ustb.util.InputData;
+import cn.ustb.util.reflect.ObjectInstanceFactory;
+import cn.ustb.vo.Emp;
+
+/**
+ * Created by MouseZhang on 2019/6/7.
+ */
+public class TestDemo {
+    public static void main(String[] args) {
+        Emp emp = ObjectInstanceFactory.create(Emp.class, InputData.input());
+        System.out.println(emp);
+    }
+}
+```
+
+**程序执行结果：**
+
+```
+Emp{empno=21095, ename='小张', job='办事员', age=22, hiredate=Sat Oct 15 00:00:00 CST 2005, sal=3580.27}
+```
+
+> 此时已经将可以考虑到的数据类型全部归纳到程序之中了。
+
+- 全部代码
 
 ### 25.5 多级对象实例化
 
