@@ -2287,7 +2287,66 @@ Emp{ename='小张', job='办事员'}
 
 ### 25.2 自动赋值实现思路
 
+> 通过分析可以发现，如果要是将输入返回的Map集合直接转为简单Java类中操作的对象数据是最方便的，此时就必须利用反射机制来实现。
+
+——tu----
+
+**范例：** 程序的实现思路
+
+```java
+package cn.ustb.util.reflect;
+
+import java.util.Map;
+
+/**
+ * Created by MouseZhang on 2019/6/7.
+ */
+public class ObjectInstanceFactory {
+    private ObjectInstanceFactory() {
+    }
+
+    /**
+     * 根据传入的Class类型获取指定类型的实例化对象，同时可以将传入的属性进行赋值（错误的属性不赋值）
+     * @param clazz 要进行实例化对象的简单Java类型
+     * @param value 包含有输入数据的Map集合，其中key和value的类型必须是String
+     * @param <T>   根据传入的Class类型获取一个具体的实例
+     * @return 带有属性内容的简单Java类对象
+     */
+    public static <T> T create(Class<?> clazz, Map<String, String> value) {
+        return null;
+    }
+}
+```
+
+> 在外部调用的时候不关心里面具体如何实现的属性处理配置，只关心最终能否获取实例化对象，所以外部调用形式如下。
+
+**范例：** 外部调用形式
+
+```java
+package cn.ustb.demo;
+
+import cn.ustb.util.InputData;
+import cn.ustb.util.reflect.ObjectInstanceFactory;
+import cn.ustb.vo.Emp;
+
+/**
+ * Created by MouseZhang on 2019/6/7.
+ */
+public class TestDemo {
+    public static void main(String[] args) {
+        Emp emp = ObjectInstanceFactory.create(Emp.class, InputData.input());
+        System.out.println(emp);
+    }
+}
+```
+
+> 实现的时候必须考虑所有类型的设计问题，因为该程序类可以实现各种简单Java类对象的创建操作。
+
+- 全部代码
+
 ### 25.3 单级属性赋值
+
+
 
 ### 25.4 设置多种数据类型
 
