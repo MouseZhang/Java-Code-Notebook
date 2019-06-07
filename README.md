@@ -2647,8 +2647,10 @@ Emp{empno=21095, ename='小张', job='办事员', age=22, hiredate=Sat Oct 15 00
 
 > 此时已经将可以考虑到的数据类型全部归纳到程序之中了。
 
-- 全部代码
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/tree/master/反射与简单Java类/设置多种数据类型)
 
 ### 25.5 多级对象实例化
+
+
 
 ### 25.6 多级属性赋值
