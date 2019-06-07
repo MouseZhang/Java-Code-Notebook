@@ -2450,9 +2450,21 @@ Emp{ename='小张', job='办事员'}
 
 > 成功地实现了对象中属性的赋值操作。
 
-- 全部代码
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/tree/master/反射与简单Java类/单级属性赋值)
 
 ### 25.4 设置多种数据类型
+
+> 在之前的代码里面为了方便起见，所有的数据类型都只是简单的考虑到了String的问题，但是在现实的开发中，对于使用的数据类型比较常见的为：Integer(int)、Double(double)、Long(long)、Date(日期、日期时间)。该操作主要在BeanUtil类中追加一个数据的转换处理方法，根据操作属性的类型实现转换处理。
+
+——tu---
+
+**范例：** 在BeanUtil类中定义一个数值转换方法
+
+```java
+
+```
+
+
 
 ### 25.5 多级对象实例化
 
