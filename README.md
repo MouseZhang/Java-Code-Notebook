@@ -2348,6 +2348,110 @@ public class TestDemo {
 
 > 所谓的单级属性指的是该类不存在有其它简单Java类的引用关联，在本类之中只考虑当前的常用类型，为了简化设计，本次先考虑当前类型是String的形式。
 
+-----tu----
+
+**范例：** 定义BeanUtil类
+
+```java
+package cn.ustb.util.reflect;
+
+import cn.ustb.util.StringUtil;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Iterator;
+import java.util.Map;
+
+/**
+ * Created by MouseZhang on 2019/6/7.
+ */
+public class BeanUtil {
+    private BeanUtil() {
+    }
+
+    public static void setValue(Object object, Map<String, String> map) {
+        Iterator<Map.Entry<String, String>> iter = map.entrySet().iterator(); // 获取Iterator接口实例
+        while (iter.hasNext()) {
+            Map.Entry<String, String> entry = iter.next(); // 获取每一组数据
+            try { // 防止某些成员输入错误而导致所有的成员赋值出错
+                Field field = object.getClass().getDeclaredField(entry.getKey());
+                // 依据传入的属性名称（key）获取相应的setter方法，并利用Field获取方法参数类型
+                Method setMethod = object.getClass().getDeclaredMethod("set" + StringUtil.initcap(entry.getKey()), field.getType());
+                setMethod.invoke(object, entry.getValue()); // 反射调用setter方法并设置属性内容
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+
+**范例：** ObjectInstanceFactory类只是简单地进行调用
+
+```java
+package cn.ustb.util.reflect;
+
+import java.util.Map;
+
+/**
+ * Created by MouseZhang on 2019/6/7.
+ */
+public class ObjectInstanceFactory {
+    private ObjectInstanceFactory() {
+    }
+
+    /**
+     * 根据传入的Class类型获取指定类型的实例化对象，同时可以将传入的属性进行赋值（错误的属性不赋值）
+     * @param clazz 要进行实例化对象的简单Java类型
+     * @param value 包含有输入数据的Map集合，其中key和value的类型必须是String
+     * @param <T>   根据传入的Class类型获取一个具体的实例
+     * @return 带有属性内容的简单Java类对象
+     */
+    public static <T> T create(Class<?> clazz, Map<String, String> value) {
+        Object object = null;
+        try {
+            // 1、在工厂类中调用类中的无参构造方法进行对象实例化处理
+            object = clazz.getDeclaredConstructor().newInstance();
+            // 2、进行内容的设置，利用反射进行处理
+            BeanUtil.setValue(object, value); // 赋值交由其它的类完成
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return (T) object;
+    }
+}
+```
+
+**范例：** 编写测试程序
+
+```java
+package cn.ustb.demo;
+
+import cn.ustb.util.InputData;
+import cn.ustb.util.reflect.ObjectInstanceFactory;
+import cn.ustb.vo.Emp;
+
+/**
+ * Created by MouseZhang on 2019/6/7.
+ */
+public class TestDemo {
+    public static void main(String[] args) {
+        Emp emp = ObjectInstanceFactory.create(Emp.class, InputData.input());
+        System.out.println(emp);
+    }
+}
+```
+
+**程序执行结果：**
+
+```
+Emp{ename='小张', job='办事员'}
+```
+
+> 成功地实现了对象中属性的赋值操作。
+
+- 全部代码
+
 ### 25.4 设置多种数据类型
 
 ### 25.5 多级对象实例化
