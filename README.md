@@ -1954,6 +1954,93 @@ public class TestDemo {
 
 - [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/反射与工厂设计模式/问题解决/TestDemo.java)
 
+### 22.4 Annotation整合工厂设计模式
+
+> Annotation最大的特点是基于注解进行配置的处理操作，所以可以见它与工厂设计模式进行一个有效的整合处理。现在，假设要进行消息的发送，那么消息发送可能是向数据库，也可能是向云服务器进行发送。
+
+———tu---
+
+**范例：** 利用Annotation简化工厂设计
+
+```java
+package cn.ustb.demo;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * Created by MouseZhang on 2019/6/8.
+ */
+
+interface IConnect {
+    public boolean build();
+}
+
+class DatabaseConnect implements IConnect {
+    @Override
+    public boolean build() {
+        System.out.println("【DatabaseConnect】进行数据库资源的连接 ...");
+        return true;
+    }
+}
+
+class CloudConnect implements IConnect {
+    @Override
+    public boolean build() {
+        System.out.println("【CloudConnect】进行云服务器资源的连接 ...");
+        return true;
+    }
+}
+
+@Target({ElementType.TYPE, ElementType.METHOD}) // 当前的Annotation可以出现在类和方法上
+@Retention(RetentionPolicy.RUNTIME)
+@interface Channel { // 自定义一个Annotation
+    public String value(); // 设置一个操作的数据
+}
+
+@Channel("cn.ustb.demo.CloudConnect")
+class Message {
+    private IConnect connect;
+
+    public Message() {
+        // 1、获取本类上定义的Annotation对象信息
+        Channel channel = super.getClass().getAnnotation(Channel.class);
+        // 2、通过Annotation获取类的名称，利用反射加载类的实例
+        try {
+            this.connect = (IConnect) Class.forName(channel.value()).getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void send(String msg) {
+        if (this.connect.build()) {
+            System.out.println("消息发送：" + msg);
+        }
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        Message message = new Message();
+        message.send("www.ustb.edu.cn");
+    }
+}
+```
+
+**程序执行结果：**
+
+```
+【CloudConnect】进行云服务器资源的连接 ...
+消息发送：www.ustb.edu.cn
+```
+
+> Annotation可以实现更加灵活地配置，简化工厂设计模式的开发结构。
+
+- 全部代码
+
 ------
 
 ## 23 反射与单例设计模式
