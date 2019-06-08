@@ -2039,7 +2039,7 @@ public class TestDemo {
 
 > Annotation可以实现更加灵活地配置，简化工厂设计模式的开发结构。
 
-- 全部代码
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/反射与工厂设计模式/Annotation整合工厂设计模式/TestDemo.java)
 
 ------
 
