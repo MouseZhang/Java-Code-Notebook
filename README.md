@@ -2260,6 +2260,96 @@ public class TestDemo {
 
 ## 24 反射与代理设计模式
 
+### 24.1 静态代理设计模式缺陷
+
+> 代理设计模式最为核心的意义在于，所有的操作业务接口都设置两个子类，一个子类负责真实的业务实现，另外一个子类负责代理业务操作，如果没有这个代理业务，真实业务也无法进行处理。
+>
+> 现假设希望可以实现一个数据的处理操作，在进行数据处理的时候，要求进行合理的事务控制，利用数据库的事务控制可以保证数据操作的完整性。
+
+——tu----
+
+**范例：** 编写静态代理设计
+
+```java
+package cn.ustb.demo;
+
+/**
+ * Created by MouseZhang on 2019/6/8.
+ */
+
+interface IMemberService { // 实现用户数据的操作
+    public void add(); // 实现用户数据的追加
+}
+
+class MemberServiceImpl implements IMemberService {
+    @Override
+    public void add() {
+        System.out.println("【真实业务主题】向数据库中执行\"INSERT INTO\"语句，进行数据添加。");
+    }
+}
+
+class MemberServiceProxy implements IMemberService {
+    private IMemberService realSubject; // 真实的操作业务
+
+    public MemberServiceProxy(IMemberService realSubject) {
+        this.realSubject = realSubject;
+    }
+
+    public boolean connect() {
+        System.out.println("【代理主题】进行数据库的访问连接 ...");
+        return true;
+    }
+
+    public void close() {
+        System.out.println("【代理主题】关闭数据库的连接 ...");
+    }
+
+    public void transaction() {
+        System.out.println("【代理主题】事务提交，进行数据更新处理 ...");
+    }
+
+    @Override
+    public void add() {
+        if (this.connect()) {
+            this.realSubject.add();
+            this.transaction();
+            this.close();
+        }
+    }
+}
+
+class Factory {
+    private Factory() {
+    }
+
+    public static IMemberService getInstance() {
+        return new MemberServiceProxy(new MemberServiceImpl());
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        IMemberService memberService = Factory.getInstance();
+        memberService.add();
+    }
+}
+```
+
+**程序执行结果：**
+
+```
+【代理主题】进行数据库的访问连接 ...
+【真实业务主题】向数据库中执行"INSERT INTO"语句，进行数据添加。
+【代理主题】事务提交，进行数据更新处理 ...
+【代理主题】关闭数据库的连接 ...
+```
+
+> 但是现在需要进一步思考一个问题，在一个数据库里，有可能会存在上百张表，如果每一张数据表都存在有一个Service接口，这时代理就会泛滥，而且会发现所有的代理步骤几乎相似。所以之前的静态代理设计模式只能够满足于一个操作接口的要求，而无法满足于所有操作接口的需求。
+
+- 全部代码
+
+### 24.2 动态代理设计模式
+
 ----
 
 ## 25 反射与简单Java类
