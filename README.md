@@ -2460,7 +2460,7 @@ public class TestDemo {
 
 > 此时的代码利用动态代理设计，动态地构建了接口的实现子类实例，并利用InvocationHandler.invoke()实现标准的代码执行调用和控制。
 
-- 全部代码
+- [全部代码](https://github.com/MouseZhang/Java-Code-Notebook/blob/master/反射与代理设计模式/动态代理设计模式/TestDemo.java)
 
 ----
 
