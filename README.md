@@ -2350,6 +2350,118 @@ public class TestDemo {
 
 ### 24.2 动态代理设计模式
 
+> 如果要想解决静态代理设计模式存在的代码重复操作问题，就只能够利用动态代理设计模式来解决，动态代理设计模式指的是一组相关操作接口的实现，可以设置统一的代理类。
+>
+> 动态代理类是在JDK1.3的时候添加到项目之中的，如果要想实现动态代理类需要"Invocation"接口和"Proxy"类的支持，观察下面java.lang.reflect.InvocationHandle接口的定义：
+
+```java
+public Interface InvocationHandler {
+	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable;	
+}
+```
+
+> 此时对于代理设计需要解决的一个核心问题在于，如何可以让InvocationHandler子类和要代理操作的业务接口产生关联，所以此时就需要通过java.lang.reflect.Proxy类来进行关联的创建，创建方法为：
+
+```java
+public static Object newProxyInstance(ClassLoader loader, Class<?>[] interfaces, InvocationHandler h)
+```
+
+> 这种代理对象的创建是依据真实主题类对象的加载器，和其实现的父接口动态创建的一个新的子类，该子类由JVM在运行时自行负责创建。
+
+—tu---
+
+**范例：** 编写动态代理设计
+
+```java
+package cn.ustb.demo;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
+/**
+ * Created by MouseZhang on 2019/6/8.
+ */
+
+interface IMemberService { // 实现用户数据的操作
+    public void add(); // 实现用户数据的追加
+}
+
+class MemberServiceImpl implements IMemberService {
+    @Override
+    public void add() {
+        System.out.println("【真实业务主题】向数据库中执行\"INSERT INTO\"语句，进行数据添加。");
+    }
+}
+
+class ServiceProxy implements InvocationHandler {
+    private Object target; // 真实业务主题对象
+
+    /**
+     * 绑定真实主题对象，同时返回代理实例
+     * @param target 真实的接口操作对象，利用反射可以追溯其来源
+     * @return 代理对象
+     */
+    public Object bind(Object target) {
+        this.target = target; // 保存真实业务对象
+        return Proxy.newProxyInstance(target.getClass().getClassLoader(), target.getClass().getInterfaces(), this);
+    }
+
+    public boolean connect() {
+        System.out.println("【代理主题】进行数据库的访问连接 ...");
+        return true;
+    }
+
+    public void close() {
+        System.out.println("【代理主题】关闭数据库的连接 ...");
+    }
+
+    public void transaction() {
+        System.out.println("【代理主题】事务提交，进行数据更新处理 ...");
+    }
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        Object returnValue = null;
+        if (this.connect()) {
+            returnValue = method.invoke(this.target, args); // 调用真实业务主题
+            this.transaction();
+            this.close();
+        }
+        return returnValue;
+    }
+}
+
+class Factory {
+    private Factory() {
+    }
+
+    public static IMemberService getInstance() {
+        return (IMemberService) new ServiceProxy().bind(new MemberServiceImpl());
+    }
+}
+
+public class TestDemo {
+    public static void main(String[] args) {
+        IMemberService memberService = Factory.getInstance(); // 得到一个JVM动态实例化的子类对象
+        memberService.add();
+    }
+}
+```
+
+**程序执行结果：**
+
+```
+【代理主题】进行数据库的访问连接 ...
+【真实业务主题】向数据库中执行"INSERT INTO"语句，进行数据添加。
+【代理主题】事务提交，进行数据更新处理 ...
+【代理主题】关闭数据库的连接 ...
+```
+
+> 此时的代码利用动态代理设计，动态地构建了接口的实现子类实例，并利用InvocationHandler.invoke()实现标准的代码执行调用和控制。
+
+- 全部代码
+
 ----
 
 ## 25 反射与简单Java类
